@@ -48,7 +48,7 @@ export default function Create() {
                                 <textarea
                                     id="description"
                                     name="description"
-                                    className="border-input bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
                                     placeholder="Service description (optional)"
                                 />
                                 <InputError message={errors.description} />
@@ -56,7 +56,9 @@ export default function Create() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="duration_minutes">Duration (minutes)</Label>
+                                    <Label htmlFor="duration_minutes">
+                                        Duration (minutes)
+                                    </Label>
                                     <Input
                                         id="duration_minutes"
                                         name="duration_minutes"
@@ -65,7 +67,9 @@ export default function Create() {
                                         required
                                         placeholder="60"
                                     />
-                                    <InputError message={errors.duration_minutes} />
+                                    <InputError
+                                        message={errors.duration_minutes}
+                                    />
                                 </div>
 
                                 <div className="grid gap-2">
@@ -84,7 +88,11 @@ export default function Create() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="flex items-center gap-2">
-                                    <input type="hidden" name="is_main_service" value="0" />
+                                    <input
+                                        type="hidden"
+                                        name="is_main_service"
+                                        value="0"
+                                    />
                                     <input
                                         id="is_main_service"
                                         name="is_main_service"
@@ -93,11 +101,15 @@ export default function Create() {
                                         defaultChecked
                                         className="size-4 rounded border-input accent-primary"
                                     />
-                                    <Label htmlFor="is_main_service">Main service</Label>
+                                    <Label htmlFor="is_main_service">
+                                        Main service
+                                    </Label>
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="sort_order">Sort order</Label>
+                                    <Label htmlFor="sort_order">
+                                        Sort order
+                                    </Label>
                                     <Input
                                         id="sort_order"
                                         name="sort_order"
@@ -111,7 +123,9 @@ export default function Create() {
 
                             <div className="flex items-center gap-4">
                                 <Button disabled={processing}>
-                                    {processing ? 'Creating...' : 'Create Service'}
+                                    {processing
+                                        ? 'Creating...'
+                                        : 'Create Service'}
                                 </Button>
                             </div>
                         </>

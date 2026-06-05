@@ -1,5 +1,11 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, ClipboardList, FolderGit2, LayoutGrid } from 'lucide-react';
+import {
+    BookOpen,
+    ClipboardList,
+    FolderGit2,
+    LayoutGrid,
+    Users,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as servicesIndex } from '@/routes/admin/services';
+import { index as therapistsIndex } from '@/routes/admin/therapists';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -27,6 +34,11 @@ const mainNavItems: NavItem[] = [
         title: 'Services',
         href: servicesIndex(),
         icon: ClipboardList,
+    },
+    {
+        title: 'Therapists',
+        href: therapistsIndex(),
+        icon: Users,
     },
 ];
 

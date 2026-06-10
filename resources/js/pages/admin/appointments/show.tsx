@@ -123,7 +123,10 @@ export default function Show({
 
     function handleStatusUpdate(e: React.FormEvent) {
         e.preventDefault();
-        if (selectedStatus === appointment.status) return;
+
+        if (selectedStatus === appointment.status) {
+return;
+}
 
         setProcessing(true);
         router.patch(

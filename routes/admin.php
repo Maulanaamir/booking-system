@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AppointmentController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\TherapistController;
 use Illuminate\Support\Facades\Route;
@@ -18,4 +19,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('therapists/{therapist}/edit', [TherapistController::class, 'edit'])->name('therapists.edit');
     Route::patch('therapists/{therapist}', [TherapistController::class, 'update'])->name('therapists.update');
     Route::patch('therapists/{therapist}/toggle-active', [TherapistController::class, 'toggleActive'])->name('therapists.toggle-active');
+
+    Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+    Route::patch('appointments/{appointment}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.update-status');
 });

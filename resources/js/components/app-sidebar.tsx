@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import {
     BookOpen,
+    Calendar,
     ClipboardList,
     FolderGit2,
     LayoutGrid,
@@ -20,6 +21,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as appointmentsIndex } from '@/routes/admin/appointments';
 import { index as servicesIndex } from '@/routes/admin/services';
 import { index as therapistsIndex } from '@/routes/admin/therapists';
 import type { NavItem } from '@/types';
@@ -39,6 +41,11 @@ const mainNavItems: NavItem[] = [
         title: 'Therapists',
         href: therapistsIndex(),
         icon: Users,
+    },
+    {
+        title: 'Appointments',
+        href: appointmentsIndex(),
+        icon: Calendar,
     },
 ];
 

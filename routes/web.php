@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', HomeController::class)->name('home');
 
 Route::get('/booking', [BookingController::class, 'show'])->name('booking.show');
 Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');

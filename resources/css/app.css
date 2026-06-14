@@ -141,3 +141,86 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* =============================================================
+   Public Design System — Safe Soft Wellness
+   Scoped to .public-page so zero bleed into admin/auth tokens.
+   ============================================================= */
+
+.public-page {
+    /* Palette */
+    --pub-cream:            #FFF8F1;
+    --pub-surface:          #FFFFFF;
+    --pub-surface-low:      #FBF2ED;
+    --pub-surface-container:#F5ECE7;
+    --pub-lavender:         #7246B4;
+    --pub-cta:              #B98CFF;
+    --pub-cta-fixed:        #ECDCFF;
+    --pub-rose:             #7F5353;
+    --pub-rose-fixed:       #FFDAD9;
+    --pub-rose-dim:         #F1B8B8;
+    --pub-sage:             #526442;
+    --pub-sage-fixed:       #D5E9BF;
+    --pub-sage-container:   #96A982;
+    --pub-text:             #1E1B18;
+    --pub-text-sub:         #4A4452;
+    --pub-text-muted:       #7A716A;
+    --pub-border:           #CCC3D4;
+
+    background-color: var(--pub-cream);
+    color: var(--pub-text);
+    font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Serif headings */
+.pub-heading {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+}
+
+/* Organic blobs — static, blurred colour circles */
+.pub-blob {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+    border-radius: 50%;
+    filter: blur(60px);
+}
+.pub-blob-rose {
+    background-color: #DFA8A8;
+    opacity: 0.18;
+}
+.pub-blob-lavender {
+    background-color: #ECDCFF;
+    opacity: 0.45;
+}
+
+/* Glass card surface */
+.pub-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 10px 40px -10px rgba(114, 70, 180, 0.08);
+}
+
+/* Solid white card (no glass) */
+.pub-card-solid {
+    background: #FFFFFF;
+    border: 1px solid rgba(204, 195, 212, 0.35);
+    box-shadow: 0 8px 30px -8px rgba(114, 70, 180, 0.07);
+}
+
+/* Input focus glow */
+.pub-input-glow:focus-within {
+    box-shadow: 0 0 0 3px rgba(185, 140, 255, 0.25);
+    border-color: #B98CFF !important;
+}
+
+/* Soft card hover lift */
+.pub-hover-lift {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.pub-hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px -12px rgba(114, 70, 180, 0.13);
+}

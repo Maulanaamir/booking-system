@@ -484,8 +484,8 @@ export default function Welcome({ services }: { services: Service[] }) {
                                 <a
                                     href="#"
                                     onClick={(e) => {
- e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); 
-}}
+                                        e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
                                     className="text-sm transition-all hover:opacity-70"
                                     style={{ color: 'var(--pub-text-sub)' }}
                                 >

@@ -11,7 +11,26 @@ Route::post('/booking', [BookingController::class, 'store'])->name('booking.stor
 Route::get('/booking/success/{appointment}', [BookingController::class, 'success'])->name('booking.success');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', function () {
+        $stats = [
+            'total_appointments' => \App\Models\Appointment::count(),
+            'pending_approval_count' => \App\Models\Appointment::where('status', 'pending_approval')->count(),
+            'pending_dp_count' => \App\Models\Appointment::where('status', 'pending_dp')->count(),
+            'confirmed_count' => \App\Models\Appointment::where('status', 'confirmed')->count(),
+            'completed_count' => \App\Models\Appointment::where('status', 'completed')->count(),
+        ];
+
+        $upcoming = \App\Models\Appointment::with(['customer', 'therapist'])
+            ->whereIn('status', ['pending_approval', 'pending_dp', 'confirmed'])
+            ->orderBy('start_at', 'asc')
+            ->take(5)
+            ->get();
+
+        return \Inertia\Inertia::render('dashboard', [
+            'stats' => $stats,
+            'upcomingAppointments' => $upcoming,
+        ]);
+    })->name('dashboard');
 });
 
 require __DIR__.'/settings.php';

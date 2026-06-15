@@ -57,6 +57,8 @@ type AppointmentDetail = {
     dp_amount: number;
     remaining_payment: number;
     customer_address_snapshot: string;
+    customer_latitude_snapshot: number | null;
+    customer_longitude_snapshot: number | null;
     customer_maps_url_snapshot: string | null;
     customer_location_note_snapshot: string | null;
     customer_note: string | null;
@@ -427,6 +429,20 @@ export default function Show({
                                         Location Note / Landmark
                                     </span>
                                     {appointment.customer_location_note_snapshot}
+                                </div>
+                            )}
+
+                            {appointment.customer_latitude_snapshot !== null && appointment.customer_longitude_snapshot !== null && (
+                                <div className="flex items-start gap-3">
+                                    <div className="p-2 bg-emerald-50 dark:bg-emerald-955/20 text-emerald-600 dark:text-emerald-450 rounded-xl shrink-0 mt-0.5">
+                                        <MapPin className="size-4 opacity-75" />
+                                    </div>
+                                    <div>
+                                        <span className="text-xs text-muted-foreground block mb-0.5">Coordinates</span>
+                                        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                            {appointment.customer_latitude_snapshot}, {appointment.customer_longitude_snapshot}
+                                        </p>
+                                    </div>
                                 </div>
                             )}
 

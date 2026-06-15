@@ -1,7 +1,24 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Check, ChevronDown, ChevronUp, Lock, MapPin } from 'lucide-react';
-import { useState } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// @ts-expect-error - leaflet assets do not have typescript declarations
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+// @ts-expect-error - leaflet assets do not have typescript declarations
+// @ts-expect-error - leaflet assets do not have typescript declarations
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+import { Check, ChevronDown, ChevronUp, Lock, MapPin, Navigation } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { store as bookingStore } from '@/routes/booking';
+
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconUrl: markerIcon,
+    iconRetinaUrl: markerIcon2x,
+    shadowUrl: markerShadow,
+});
 
 type Service = {
     id: number; name: string; description: string | null;
@@ -11,6 +28,7 @@ type BookingForm = {
     service_ids: number[]; date: string; time: string;
     name: string; phone_number: string; address: string;
     maps_url: string; location_note: string; customer_note: string;
+    latitude: number | null; longitude: number | null;
 };
 
 function formatPrice(p: number) {
@@ -88,6 +106,10 @@ const T = {
         selectMainToContinue: 'Pilih minimal satu layanan utama untuk melanjutkan.',
         whatsappContactNotice: 'Kami akan menghubungi Anda melalui WhatsApp untuk mengonfirmasi pemesanan.',
         backToHome: 'Kembali ke beranda',
+        useCurrentLocation: 'Gunakan Lokasi Saya',
+        locating: 'Mencari...',
+        mapInstruction: 'Geser penanda (marker) atau klik pada peta untuk menentukan posisi akurat Anda.',
+        coordinatesLabel: 'Koordinat',
     },
     en: {
         title: 'Book a Session — Home Care Therapy',
@@ -132,6 +154,10 @@ const T = {
         selectMainToContinue: 'Select at least one main service to continue.',
         whatsappContactNotice: 'We will contact you via WhatsApp to confirm your booking.',
         backToHome: 'Back to home',
+        useCurrentLocation: 'Use My Current Location',
+        locating: 'Locating...',
+        mapInstruction: 'Drag the marker or click on the map to pinpoint your exact location.',
+        coordinatesLabel: 'Coordinates',
     }
 };
 
@@ -149,7 +175,7 @@ function SvcCard({ service, selected, onToggle, accent }: { service: Service; se
                     <div className="min-w-0">
                         <p className="truncate text-sm font-semibold" style={{ color:'var(--pub-text)' }}>{service.name}</p>
                         {service.description && (
-                            <p className="line-clamp-1 text-xs" style={{ color:'var(--pub-text-muted)' }}>{service.description}</p>
+                            <p className="whitespace-normal break-words leading-relaxed text-xs" style={{ color:'var(--pub-text-muted)' }}>{service.description}</p>
                         )}
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1">
@@ -191,7 +217,115 @@ export default function Show({ services }: { services: Service[] }) {
     const { data, setData, post, processing, errors } = useForm<BookingForm>({
         service_ids:[], date:'', time:'', name:'', phone_number:'',
         address:'', maps_url:'', location_note:'', customer_note:'',
+        latitude: null, longitude: null,
     });
+
+    const mapContainerRef = useRef<HTMLDivElement>(null);
+    const mapRef = useRef<L.Map | null>(null);
+    const markerRef = useRef<L.Marker | null>(null);
+    const [geoLoading, setGeoLoading] = useState(false);
+    const [geoError, setGeoError] = useState<string | null>(null);
+
+    const defaultCenter: [number, number] = [-6.2, 106.8]; // Jakarta/Tangerang/Bekasi
+    const defaultZoom = 12;
+
+    const updateCoordinates = (lat: number, lng: number) => {
+        setData((prev) => ({
+            ...prev,
+            latitude: lat,
+            longitude: lng,
+            maps_url: `https://www.google.com/maps?q=${lat},${lng}`,
+        }));
+    };
+
+    useEffect(() => {
+        if (!mapContainerRef.current) {
+return;
+}
+
+        // Initialize map
+        const map = L.map(mapContainerRef.current).setView(
+            data.latitude && data.longitude ? [data.latitude, data.longitude] : defaultCenter,
+            defaultZoom
+        );
+        mapRef.current = map;
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add draggable marker
+        const markerLatLng = data.latitude && data.longitude ? L.latLng(data.latitude, data.longitude) : L.latLng(defaultCenter);
+        const marker = L.marker(markerLatLng, { draggable: true }).addTo(map);
+        markerRef.current = marker;
+
+        // Update coordinate states on drag end
+        marker.on('dragend', () => {
+            const position = marker.getLatLng();
+            updateCoordinates(position.lat, position.lng);
+        });
+
+        // Click map to reposition marker
+        map.on('click', (e) => {
+            marker.setLatLng(e.latlng);
+            updateCoordinates(e.latlng.lat, e.latlng.lng);
+        });
+
+        return () => {
+            map.remove();
+            mapRef.current = null;
+            markerRef.current = null;
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Geolocation handler
+    const handleUseCurrentLocation = () => {
+        if (!navigator.geolocation) {
+            setGeoError(lang === 'id' ? 'Geolokasi tidak didukung oleh browser Anda.' : 'Geolocation is not supported by your browser.');
+
+            return;
+        }
+
+        setGeoLoading(true);
+        setGeoError(null);
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                updateCoordinates(latitude, longitude);
+
+                // Update map view and marker position
+                if (mapRef.current) {
+                    mapRef.current.setView([latitude, longitude], 15);
+                }
+
+                if (markerRef.current) {
+                    markerRef.current.setLatLng([latitude, longitude]);
+                }
+
+                setGeoLoading(false);
+            },
+            (error) => {
+                setGeoLoading(false);
+                let msg = '';
+
+                if (error.code === error.PERMISSION_DENIED) {
+                    msg = lang === 'id' 
+                        ? 'Izin geolokasi ditolak. Silakan pilih lokasi Anda secara manual di peta.'
+                        : 'Geolocation permission denied. Please select your location manually on the map.';
+                } else {
+                    msg = lang === 'id'
+                        ? 'Gagal mendapatkan lokasi Anda. Silakan pilih di peta secara manual.'
+                        : 'Failed to retrieve your location. Please select it manually on the map.';
+                }
+
+                setGeoError(msg);
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    };
 
     function toggleService(id: number) {
         setData('service_ids', data.service_ids.includes(id)
@@ -424,7 +558,7 @@ export default function Show({ services }: { services: Service[] }) {
                                 <section className="pub-card-solid rounded-2xl p-5">
                                     <h2 className="pub-heading mb-1 text-xl font-semibold" style={{ color:'var(--pub-text)' }}>{T[lang].locationTitle}</h2>
                                     <p className="mb-4 text-sm" style={{ color:'var(--pub-text-muted)' }}>{T[lang].locationDesc}</p>
-                                    <div className="flex flex-col gap-3">
+                                    <div className="flex flex-col gap-4">
                                         <div>
                                             <label htmlFor="address" className="mb-1.5 block text-sm font-semibold" style={{ color:'var(--pub-text)' }}>{T[lang].addressLabel} <span className="text-red-500">*</span></label>
                                             <textarea id="address" rows={3} value={data.address}
@@ -441,16 +575,52 @@ export default function Show({ services }: { services: Service[] }) {
                                                 placeholder={T[lang].locationNotePlaceholder} className={INP} style={INP_S} />
                                             {errors.location_note && <p className="mt-1 text-xs text-red-655">{errors.location_note}</p>}
                                         </div>
-                                        <div>
-                                            <label htmlFor="maps_url" className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold" style={{ color:'var(--pub-text)' }}>
-                                                <MapPin className="size-3.5" style={{ color:'var(--pub-lavender)' }} />
-                                                {T[lang].mapsLabel} <span className="font-normal" style={{ color:'var(--pub-text-muted)' }}>(optional)</span>
-                                            </label>
-                                            <input id="maps_url" type="url" value={data.maps_url}
-                                                onChange={e => setData('maps_url', e.target.value)}
-                                                placeholder={T[lang].mapsPlaceholder} className={INP} style={INP_S} />
-                                            {errors.maps_url && <p className="mt-1 text-xs text-red-655">{errors.maps_url}</p>}
+
+                                        {/* Map coordinates picker */}
+                                        <div className="space-y-2">
+                                            <div className="flex flex-wrap items-center justify-between gap-2">
+                                                <label className="flex items-center gap-1.5 text-sm font-semibold" style={{ color:'var(--pub-text)' }}>
+                                                    <MapPin className="size-3.5" style={{ color:'var(--pub-lavender)' }} />
+                                                    <span>Pinpoint Location</span>
+                                                </label>
+                                                <button
+                                                    type="button"
+                                                    onClick={handleUseCurrentLocation}
+                                                    disabled={geoLoading}
+                                                    className="inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold shadow-sm transition-colors cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 disabled:opacity-50"
+                                                    style={{
+                                                        borderColor: 'var(--pub-border)',
+                                                        backgroundColor: 'var(--pub-surface-container)',
+                                                        color: 'var(--pub-text)',
+                                                    }}
+                                                >
+                                                    <Navigation className={`size-3.5 ${geoLoading ? 'animate-spin' : ''}`} style={{ color: 'var(--pub-lavender)' }} />
+                                                    <span>{geoLoading ? T[lang].locating : T[lang].useCurrentLocation}</span>
+                                                </button>
+                                            </div>
+
+                                            <div className="relative w-full rounded-xl overflow-hidden border border-neutral-200" style={{ height: '260px', zIndex: 10 }}>
+                                                <div ref={mapContainerRef} className="w-full h-full text-black" />
+                                            </div>
+                                            
+                                            <p className="text-xs leading-relaxed" style={{ color:'var(--pub-text-muted)' }}>
+                                                {T[lang].mapInstruction}
+                                            </p>
+
+                                            {geoError && (
+                                                <p className="text-xs font-semibold text-rose-600 dark:text-rose-400 mt-1">
+                                                    {geoError}
+                                                </p>
+                                            )}
+
+                                            {data.latitude && data.longitude && (
+                                                <div className="text-xs p-3 rounded-xl border space-y-1" style={{ backgroundColor: 'var(--pub-surface-container)', borderColor: 'var(--pub-border)', color: 'var(--pub-text)' }}>
+                                                    <p><span className="font-semibold">{T[lang].coordinatesLabel}:</span> {data.latitude.toFixed(6)}, {data.longitude.toFixed(6)}</p>
+                                                    <p className="truncate"><span className="font-semibold">URL:</span> <span className="opacity-80">{data.maps_url}</span></p>
+                                                </div>
+                                            )}
                                         </div>
+
                                         <div className="flex items-start gap-3 rounded-xl p-4"
                                             style={{ backgroundColor:'rgba(149,170,130,0.12)', border:'1px solid var(--pub-sage-container)' }}>
                                             <Lock className="mt-0.5 size-4 shrink-0" style={{ color:'var(--pub-sage)' }} />

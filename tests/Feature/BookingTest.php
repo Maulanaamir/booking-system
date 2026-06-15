@@ -52,6 +52,8 @@ class BookingTest extends TestCase
             'maps_url' => null,
             'location_note' => null,
             'customer_note' => null,
+            'latitude' => null,
+            'longitude' => null,
         ], $overrides);
     }
 
@@ -335,14 +337,48 @@ class BookingTest extends TestCase
             'address' => 'Jl. Mangga No. 5',
             'maps_url' => 'https://maps.google.com/?q=-6.2,106.8',
             'location_note' => 'Blue gate',
+            'latitude' => -6.2111,
+            'longitude' => 106.8111,
         ]);
 
         $this->post(route('booking.store'), $payload);
 
         $this->assertDatabaseHas('appointments', [
             'customer_address_snapshot' => 'Jl. Mangga No. 5',
-            'customer_maps_url_snapshot' => 'https://maps.google.com/?q=-6.2,106.8',
+            'customer_latitude_snapshot' => -6.2111,
+            'customer_longitude_snapshot' => 106.8111,
+            'customer_maps_url_snapshot' => 'https://www.google.com/maps?q=-6.2111,106.8111',
             'customer_location_note_snapshot' => 'Blue gate',
+        ]);
+
+        $this->assertDatabaseHas('customers', [
+            'default_address' => 'Jl. Mangga No. 5',
+            'default_latitude' => -6.2111,
+            'default_longitude' => 106.8111,
+            'default_maps_url' => 'https://www.google.com/maps?q=-6.2111,106.8111',
+            'default_location_note' => 'Blue gate',
+        ]);
+    }
+
+    public function test_location_snapshot_fallback_to_submitted_maps_url_if_no_coordinates(): void
+    {
+        $this->therapist();
+        $main = $this->mainService();
+        $payload = $this->validPayload([
+            'service_ids' => [$main->id],
+            'address' => 'Jl. Mangga No. 5',
+            'maps_url' => 'https://maps.google.com/?q=-6.2,106.8',
+            'latitude' => null,
+            'longitude' => null,
+        ]);
+
+        $this->post(route('booking.store'), $payload);
+
+        $this->assertDatabaseHas('appointments', [
+            'customer_address_snapshot' => 'Jl. Mangga No. 5',
+            'customer_latitude_snapshot' => null,
+            'customer_longitude_snapshot' => null,
+            'customer_maps_url_snapshot' => 'https://maps.google.com/?q=-6.2,106.8',
         ]);
     }
 

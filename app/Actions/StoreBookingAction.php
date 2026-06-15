@@ -60,13 +60,21 @@ class StoreBookingAction
             $dpAmount = self::DP_AMOUNT;
             $remainingPayment = $totalPrice - $dpAmount;
 
+            $lat = $request->validated('latitude');
+            $lng = $request->validated('longitude');
+            $mapsUrl = ($lat !== null && $lng !== null)
+                ? "https://www.google.com/maps?q={$lat},{$lng}"
+                : $request->validated('maps_url');
+
             // 7. Create or update customer
             $customer = Customer::updateOrCreate(
                 ['phone_number' => $request->validated('phone_number')],
                 [
                     'name' => $request->validated('name'),
                     'default_address' => $request->validated('address'),
-                    'default_maps_url' => $request->validated('maps_url'),
+                    'default_latitude' => $lat,
+                    'default_longitude' => $lng,
+                    'default_maps_url' => $mapsUrl,
                     'default_location_note' => $request->validated('location_note'),
                 ],
             );
@@ -87,7 +95,9 @@ class StoreBookingAction
                 'status' => 'pending_dp',
                 'payment_status' => 'unpaid',
                 'customer_address_snapshot' => $request->validated('address'),
-                'customer_maps_url_snapshot' => $request->validated('maps_url'),
+                'customer_latitude_snapshot' => $lat,
+                'customer_longitude_snapshot' => $lng,
+                'customer_maps_url_snapshot' => $mapsUrl,
                 'customer_location_note_snapshot' => $request->validated('location_note'),
                 'customer_note' => $request->validated('customer_note'),
             ]);

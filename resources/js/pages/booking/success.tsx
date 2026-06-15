@@ -8,6 +8,7 @@ import {
     Lock,
     ReceiptText,
 } from 'lucide-react';
+import { useState } from 'react';
 import { show as bookingShow } from '@/routes/booking';
 
 type AppointmentSummary = {
@@ -24,8 +25,8 @@ function formatPrice(price: number): string {
     return `Rp ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
 }
 
-function formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleString('id-ID', {
+function formatDate(dateStr: string, lang: 'id' | 'en'): string {
+    return new Date(dateStr).toLocaleString(lang === 'id' ? 'id-ID' : 'en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -35,12 +36,51 @@ function formatDate(dateStr: string): string {
     });
 }
 
-function formatTime(dateStr: string): string {
-    return new Date(dateStr).toLocaleTimeString('id-ID', {
+function formatTime(dateStr: string, lang: 'id' | 'en'): string {
+    return new Date(dateStr).toLocaleTimeString(lang === 'id' ? 'id-ID' : 'en-US', {
         hour: '2-digit',
         minute: '2-digit',
     });
 }
+
+const T = {
+    id: {
+        title: 'Pemesanan Diterima — Home Care Therapy',
+        receivedTag: 'Pemesanan Diterima',
+        allSetTitle: 'Semua Sudah Siap',
+        successDesc: 'Permintaan pemesanan terapi di rumah Anda telah kami terima. Kami akan menghubungi Anda segera melalui WhatsApp untuk mengonfirmasi sesi dan metode pembayaran DP.',
+        reference: 'Nomor Referensi',
+        schedule: 'Jadwal Sesi',
+        endsApprox: (timeStr: string) => `Selesai sekitar jam ${timeStr}`,
+        paymentDetails: 'Rincian Pembayaran',
+        total: 'Total Biaya',
+        dpToConfirm: 'DP untuk Konfirmasi',
+        remaining: 'Sisa Pembayaran',
+        safetyNotice: 'Alamat Anda hanya digunakan untuk janji temu ini. Keamanan dan kenyamanan Anda adalah prioritas kami.',
+        nextStepsTitle: 'Langkah Selanjutnya: Transfer DP',
+        nextStepsDesc: (priceStr: string) => `Silakan transfer uang muka sebesar ${priceStr} untuk mengamankan slot jadwal Anda. Panduan pembayaran lengkap akan dikirimkan oleh admin kami via WhatsApp sebentar lagi.`,
+        bookAnother: 'Pesan Sesi Lainnya',
+        backToHome: 'Kembali ke Beranda',
+    },
+    en: {
+        title: 'Booking Received — Home Care Therapy',
+        receivedTag: 'Booking received',
+        allSetTitle: "You're all set",
+        successDesc: "Your booking request has been received. We'll contact you via WhatsApp to confirm your session and DP payment.",
+        reference: 'Reference',
+        schedule: 'Schedule',
+        endsApprox: (timeStr: string) => `Ends approx. ${timeStr}`,
+        paymentDetails: 'Payment details',
+        total: 'Total',
+        dpToConfirm: 'DP to confirm',
+        remaining: 'Remaining',
+        safetyNotice: 'Your address is used only for this appointment. Your comfort and safety come first.',
+        nextStepsTitle: 'Next: complete your DP payment',
+        nextStepsDesc: (priceStr: string) => `Pay the DP of ${priceStr} to secure your slot. Our team will send the payment instructions via WhatsApp shortly.`,
+        bookAnother: 'Book Another Session',
+        backToHome: 'Back to Home',
+    }
+};
 
 export default function Success({
     appointment,
@@ -49,13 +89,26 @@ export default function Success({
 }) {
     const shortId = appointment.id.slice(0, 8).toUpperCase();
 
+    const [lang, setLang] = useState<'id' | 'en'>(() => {
+        if (typeof window !== 'undefined') {
+            return (localStorage.getItem('pub-lang') as 'id' | 'en') || 'id';
+        }
+
+        return 'id';
+    });
+
+    const changeLang = (newLang: 'id' | 'en') => {
+        setLang(newLang);
+        localStorage.setItem('pub-lang', newLang);
+    };
+
     return (
         <>
             <Head>
-                <title>Booking Received — Home Care Therapy</title>
+                <title>{T[lang].title}</title>
                 <meta
                     name="description"
-                    content="Your home therapy booking request has been received. We will contact you via WhatsApp to confirm your session."
+                    content={T[lang].successDesc}
                 />
             </Head>
 
@@ -69,6 +122,34 @@ export default function Success({
                     aria-hidden
                     className="pub-blob pub-blob-lavender fixed -bottom-24 -left-24 h-[320px] w-[320px]"
                 />
+
+                {/* Header-like row inside page for mobile/tablet language toggle */}
+                <div className="absolute top-5 right-5 z-20">
+                    <div className="flex items-center gap-1 rounded-full border p-1" style={{ borderColor: 'var(--pub-border)', backgroundColor: 'var(--pub-surface)' }}>
+                        <button
+                            type="button"
+                            onClick={() => changeLang('id')}
+                            className={`rounded-full px-2 py-0.5 text-[10px] font-bold transition-all ${
+                                lang === 'id'
+                                    ? 'bg-violet-600 text-white'
+                                    : 'text-neutral-500 hover:opacity-80'
+                            }`}
+                        >
+                            ID
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => changeLang('en')}
+                            className={`rounded-full px-2 py-0.5 text-[10px] font-bold transition-all ${
+                                lang === 'en'
+                                    ? 'bg-violet-600 text-white'
+                                    : 'text-neutral-500 hover:opacity-80'
+                            }`}
+                        >
+                            EN
+                        </button>
+                    </div>
+                </div>
 
                 <main className="relative z-10 mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-md flex-col justify-center">
                     {/* Brand label */}
@@ -126,21 +207,19 @@ export default function Success({
                                 className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
                                 style={{ color: 'var(--pub-rose)' }}
                             >
-                                Booking received
+                                {T[lang].receivedTag}
                             </p>
                             <h1
                                 className="pub-heading text-3xl font-semibold italic"
                                 style={{ color: 'var(--pub-text)' }}
                             >
-                                You're all set
+                                {T[lang].allSetTitle}
                             </h1>
                             <p
                                 className="mx-auto mt-3 max-w-sm text-sm leading-relaxed"
                                 style={{ color: 'var(--pub-text-muted)' }}
                             >
-                                Your booking request has been received. We'll
-                                contact you via WhatsApp to confirm your session
-                                and DP payment.
+                                {T[lang].successDesc}
                             </p>
                         </div>
 
@@ -158,7 +237,7 @@ export default function Success({
                                     style={{ color: 'var(--pub-text-muted)' }}
                                 >
                                     <ReceiptText className="size-3.5" />
-                                    Reference
+                                    {T[lang].reference}
                                 </p>
                                 <p
                                     className="font-mono text-lg font-bold tracking-[0.22em]"
@@ -181,22 +260,21 @@ export default function Success({
                                     style={{ color: 'var(--pub-text-muted)' }}
                                 >
                                     <CalendarCheck className="size-3.5" />
-                                    Schedule
+                                    {T[lang].schedule}
                                 </p>
 
                                 <p
                                     className="text-sm font-semibold leading-relaxed"
                                     style={{ color: 'var(--pub-text)' }}
                                 >
-                                    {formatDate(appointment.start_at)}
+                                    {formatDate(appointment.start_at, lang)}
                                 </p>
                                 <p
                                     className="mt-1 flex items-center gap-1.5 text-xs"
                                     style={{ color: 'var(--pub-text-muted)' }}
                                 >
                                     <Clock className="size-3.5" />
-                                    Ends approx.{' '}
-                                    {formatTime(appointment.service_end_at)}
+                                    {T[lang].endsApprox(formatTime(appointment.service_end_at, lang))}
                                 </p>
                             </div>
 
@@ -213,13 +291,13 @@ export default function Success({
                                     style={{ color: 'var(--pub-text-muted)' }}
                                 >
                                     <CreditCard className="size-3.5" />
-                                    Payment details
+                                    {T[lang].paymentDetails}
                                 </p>
 
                                 <div className="space-y-2 text-sm">
                                     <div className="flex justify-between gap-4">
                                         <span style={{ color: 'var(--pub-text-sub)' }}>
-                                            Total
+                                            {T[lang].total}
                                         </span>
                                         <span
                                             className="font-semibold"
@@ -230,7 +308,7 @@ export default function Success({
                                     </div>
                                     <div className="flex justify-between gap-4">
                                         <span style={{ color: 'var(--pub-text-sub)' }}>
-                                            DP to confirm
+                                            {T[lang].dpToConfirm}
                                         </span>
                                         <span
                                             className="font-semibold"
@@ -241,7 +319,7 @@ export default function Success({
                                     </div>
                                     <div className="flex justify-between gap-4">
                                         <span style={{ color: 'var(--pub-text-sub)' }}>
-                                            Remaining
+                                            {T[lang].remaining}
                                         </span>
                                         <span
                                             className="font-medium"
@@ -271,8 +349,7 @@ export default function Success({
                                     className="text-xs leading-relaxed"
                                     style={{ color: 'var(--pub-sage)' }}
                                 >
-                                    Your address is used only for this appointment.
-                                    Your comfort and safety come first.
+                                    {T[lang].safetyNotice}
                                 </p>
                             </div>
 
@@ -288,18 +365,13 @@ export default function Success({
                                     className="mb-1 text-sm font-semibold"
                                     style={{ color: '#92400e' }}
                                 >
-                                    Next: complete your DP payment
+                                    {T[lang].nextStepsTitle}
                                 </p>
                                 <p
                                     className="text-sm leading-relaxed"
                                     style={{ color: '#a16207' }}
                                 >
-                                    Pay the DP of{' '}
-                                    <strong>
-                                        {formatPrice(appointment.dp_amount)}
-                                    </strong>{' '}
-                                    to secure your slot. Our team will send the
-                                    payment instructions via WhatsApp shortly.
+                                    {T[lang].nextStepsDesc(formatPrice(appointment.dp_amount))}
                                 </p>
                             </div>
                         </div>
@@ -312,7 +384,7 @@ export default function Success({
                             className="block w-full rounded-full px-6 py-4 text-center text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg"
                             style={{ backgroundColor: 'var(--pub-cta)' }}
                         >
-                            Book Another Session
+                            {T[lang].bookAnother}
                         </Link>
                         <Link
                             href="/"
@@ -324,7 +396,7 @@ export default function Success({
                             }}
                         >
                             <Home className="size-4" />
-                            Back to Home
+                            {T[lang].backToHome}
                         </Link>
                     </div>
 

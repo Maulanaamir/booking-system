@@ -17,15 +17,23 @@ function formatPrice(p: number) {
     return `Rp ${p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
 }
 
-function getNext7Days() {
+function getNext7Days(lang: 'id' | 'en') {
     const days: { dayName: string; label: string; value: string }[] = [];
     const now = new Date();
-    const DN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    
+    const DN = lang === 'id' 
+        ? ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] 
+        : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+    const MN = lang === 'id'
+        ? ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
+        : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const todayLabel = lang === 'id' ? 'Hari Ini' : 'Today';
 
     for (let i = 0; i < 7; i++) {
         const d = new Date(now); d.setDate(now.getDate() + i);
-        days.push({ dayName: i === 0 ? 'Today' : DN[d.getDay()], label: `${d.getDate()} ${MN[d.getMonth()]}`, value: d.toISOString().slice(0, 10) });
+        days.push({ dayName: i === 0 ? todayLabel : DN[d.getDay()], label: `${d.getDate()} ${MN[d.getMonth()]}`, value: d.toISOString().slice(0, 10) });
     }
 
     return days;
@@ -35,6 +43,97 @@ const PREF_TIMES = ['09:00','10:30','13:00','15:00','17:00'];
 const MAIN_PREVIEW = 4;
 const INP = 'w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all focus:border-[#B98CFF] focus:ring-2 focus:ring-[#B98CFF]/20';
 const INP_S = { backgroundColor:'var(--pub-surface-container)', borderColor:'var(--pub-border)', color:'var(--pub-text)' };
+
+const T = {
+    id: {
+        title: 'Formulir Pemesanan Sesi — Home Care Therapy',
+        headerText: 'Pesan Sesi Terapi',
+        treatmentTitle: 'Pilih Layanan Terapi',
+        treatmentDesc: 'Pilih minimal satu layanan utama. Layanan add-on dapat ditambahkan bersama layanan utama.',
+        showFewer: 'Tampilkan lebih sedikit',
+        showAll: (count: number) => `Tampilkan semua layanan (${count} lagi)`,
+        mainRequiredWarning: '⚠ Harap pilih minimal satu layanan utama. Add-on tidak dapat dipesan sendiri.',
+        addExtraCare: 'Tambah layanan tambahan',
+        hideExtraCare: 'Sembunyikan layanan tambahan',
+        addedBadge: (count: number) => `${count} ditambahkan`,
+        addonsCombinedDesc: 'Add-on harus digabungkan dengan layanan utama.',
+        selectedBadge: (count: number, mins: number) => `${count} dipilih · ${mins} menit total`,
+        chooseSchedule: 'Pilih Jadwal Terapi',
+        dateLabel: 'Tanggal',
+        timeLabel: 'Jam Pilihan',
+        customTimeLabel: 'Atau masukkan jam kustom:',
+        detailsTitle: 'Informasi Diri Anda',
+        fullNameLabel: 'Nama Lengkap',
+        fullNamePlaceholder: 'cth. Siti Aminah',
+        whatsappLabel: 'Nomor WhatsApp',
+        whatsappPlaceholder: 'cth. 08123456789',
+        additionalNotesLabel: 'Catatan Tambahan',
+        additionalNotesPlaceholder: 'cth. Keluhan fisik atau instruksi khusus...',
+        locationTitle: 'Alamat Kunjungan',
+        locationDesc: 'Tulis alamat lengkap Anda agar terapis kami dapat menuju ke lokasi.',
+        addressLabel: 'Alamat Lengkap',
+        addressPlaceholder: 'Jalan, RT/RW, Kelurahan, Kecamatan, Kota...',
+        locationNoteLabel: 'Patokan Lokasi',
+        locationNotePlaceholder: 'cth. Pagar merah, rumah ke-2 dari kiri',
+        mapsLabel: 'Link Google Maps',
+        mapsPlaceholder: 'https://maps.google.com/...',
+        safetyNotice: 'Alamat Anda hanya digunakan untuk keperluan janji temu ini. Keamanan data terjamin.',
+        summaryTitle: 'Ringkasan Pemesanan',
+        noServicesSelected: 'Belum ada layanan yang dipilih.',
+        total: 'Total Biaya',
+        dpAmount: 'Uang Muka (DP)',
+        remaining: 'Sisa Pembayaran (bayar ke terapis)',
+        submitting: 'Mengirim...',
+        confirmBtn: 'Konfirmasi Pemesanan',
+        selectMainToContinue: 'Pilih minimal satu layanan utama untuk melanjutkan.',
+        whatsappContactNotice: 'Kami akan menghubungi Anda melalui WhatsApp untuk mengonfirmasi pemesanan.',
+        backToHome: 'Kembali ke beranda',
+    },
+    en: {
+        title: 'Book a Session — Home Care Therapy',
+        headerText: 'Book a Session',
+        treatmentTitle: 'Select your treatment',
+        treatmentDesc: 'Choose at least one main service. Add-ons can be combined with a main service.',
+        showFewer: 'Show fewer',
+        showAll: (count: number) => `Show all services (${count} more)`,
+        mainRequiredWarning: '⚠ Please also select at least one main service. Add-ons cannot be booked alone.',
+        addExtraCare: 'Add extra care',
+        hideExtraCare: 'Hide extra care',
+        addedBadge: (count: number) => `${count} added`,
+        addonsCombinedDesc: 'Add-ons must be combined with a main service.',
+        selectedBadge: (count: number, mins: number) => `${count} selected · ${mins} min total`,
+        chooseSchedule: 'Choose your schedule',
+        dateLabel: 'Date',
+        timeLabel: 'Preferred time',
+        customTimeLabel: 'Or enter a custom time:',
+        detailsTitle: 'Your details',
+        fullNameLabel: 'Full Name',
+        fullNamePlaceholder: 'e.g. Siti Aminah',
+        whatsappLabel: 'WhatsApp Number',
+        whatsappPlaceholder: 'e.g. 08123456789',
+        additionalNotesLabel: 'Additional Notes',
+        additionalNotesPlaceholder: 'Any special requests or conditions...',
+        locationTitle: 'Where should we come?',
+        locationDesc: 'Enter your home address so our therapist can find you.',
+        addressLabel: 'Full Address',
+        addressPlaceholder: 'Street, RT/RW, Kelurahan, Kecamatan, City...',
+        locationNoteLabel: 'Location Note',
+        locationNotePlaceholder: 'e.g. Red gate, 2nd house from the left',
+        mapsLabel: 'Google Maps Link',
+        mapsPlaceholder: 'https://maps.google.com/...',
+        safetyNotice: 'Your address is used only for this appointment. No data is shared.',
+        summaryTitle: 'Order Summary',
+        noServicesSelected: 'No services selected yet.',
+        total: 'Total',
+        dpAmount: 'DP (required to confirm)',
+        remaining: 'Remaining (paid to therapist)',
+        submitting: 'Submitting...',
+        confirmBtn: 'Confirm Booking',
+        selectMainToContinue: 'Select at least one main service to continue.',
+        whatsappContactNotice: 'We will contact you via WhatsApp to confirm your booking.',
+        backToHome: 'Back to home',
+    }
+};
 
 function SvcCard({ service, selected, onToggle, accent }: { service: Service; selected: boolean; onToggle: () => void; accent: string }) {
     return (
@@ -67,9 +166,22 @@ function SvcCard({ service, selected, onToggle, accent }: { service: Service; se
 }
 
 export default function Show({ services }: { services: Service[] }) {
+    const [lang, setLang] = useState<'id' | 'en'>(() => {
+        if (typeof window !== 'undefined') {
+            return (localStorage.getItem('pub-lang') as 'id' | 'en') || 'id';
+        }
+
+        return 'id';
+    });
+
+    const changeLang = (newLang: 'id' | 'en') => {
+        setLang(newLang);
+        localStorage.setItem('pub-lang', newLang);
+    };
+
     const mainServices = services.filter(s => s.is_main_service);
     const addonServices = services.filter(s => !s.is_main_service);
-    const days = getNext7Days();
+    const days = getNext7Days(lang);
 
     const [showAllMain, setShowAllMain] = useState(false);
     const [showAddons, setShowAddons] = useState(false);
@@ -95,13 +207,13 @@ export default function Show({ services }: { services: Service[] }) {
     const remaining = Math.max(0, serviceTotal - dpAmount);
 
     function handleSubmit(e: React.FormEvent) {
- e.preventDefault(); post(bookingStore.url(), { preserveScroll: true }); 
-}
+        e.preventDefault(); post(bookingStore.url(), { preserveScroll: true }); 
+    }
 
     return (
         <>
             <Head>
-                <title>Book a Session — Home Care Therapy</title>
+                <title>{T[lang].title}</title>
                 <meta name="description" content="Book a calm home therapy session at your doorstep." />
             </Head>
 
@@ -115,8 +227,36 @@ export default function Show({ services }: { services: Service[] }) {
                     <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 md:px-10">
                         <Link href="/" className="flex size-10 items-center justify-center rounded-full text-lg transition-all hover:-translate-y-0.5"
                             style={{ backgroundColor:'var(--pub-surface)', color:'var(--pub-text-sub)', boxShadow:'0 4px 14px -4px rgba(114,70,180,0.12)' }}>←</Link>
-                        <span className="pub-heading text-lg font-semibold italic" style={{ color:'var(--pub-lavender)' }}>Book a Session</span>
-                        <div className="size-10" />
+                        
+                        <span className="pub-heading text-lg font-semibold italic" style={{ color:'var(--pub-lavender)' }}>
+                            {T[lang].headerText}
+                        </span>
+
+                        {/* Language Selector */}
+                        <div className="flex items-center gap-1 rounded-full border p-1" style={{ borderColor: 'var(--pub-border)', backgroundColor: 'var(--pub-surface)' }}>
+                            <button
+                                type="button"
+                                onClick={() => changeLang('id')}
+                                className={`rounded-full px-2 py-0.5 text-[10px] font-bold transition-all ${
+                                    lang === 'id'
+                                        ? 'bg-violet-600 text-white'
+                                        : 'text-neutral-500 hover:opacity-80'
+                                }`}
+                            >
+                                ID
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => changeLang('en')}
+                                className={`rounded-full px-2 py-0.5 text-[10px] font-bold transition-all ${
+                                    lang === 'en'
+                                        ? 'bg-violet-600 text-white'
+                                        : 'text-neutral-500 hover:opacity-80'
+                                }`}
+                            >
+                                EN
+                            </button>
+                        </div>
                     </div>
                 </header>
 
@@ -127,8 +267,8 @@ export default function Show({ services }: { services: Service[] }) {
                             {/* ═══ LEFT: Service selection ════════════════ */}
                             <div className="flex flex-col gap-5">
                                 <div>
-                                    <h1 className="pub-heading mb-1 text-2xl font-semibold" style={{ color:'var(--pub-text)' }}>Select your treatment</h1>
-                                    <p className="text-sm" style={{ color:'var(--pub-text-muted)' }}>Choose at least one main service. Add-ons can be combined with a main service.</p>
+                                    <h1 className="pub-heading mb-1 text-2xl font-semibold" style={{ color:'var(--pub-text)' }}>{T[lang].treatmentTitle}</h1>
+                                    <p className="text-sm" style={{ color:'var(--pub-text-muted)' }}>{T[lang].treatmentDesc}</p>
                                 </div>
 
                                 {/* Main services */}
@@ -143,15 +283,15 @@ export default function Show({ services }: { services: Service[] }) {
                                     <button type="button" onClick={() => setShowAllMain(v => !v)}
                                         className="flex items-center gap-1.5 self-start rounded-full px-4 py-2 text-sm font-semibold transition-all hover:opacity-80"
                                         style={{ border:'1px solid var(--pub-border)', color:'var(--pub-lavender)', backgroundColor:'var(--pub-surface)' }}>
-                                        {showAllMain ? <><ChevronUp className="size-4" />Show fewer</> : <><ChevronDown className="size-4" />Show all services ({mainServices.length - MAIN_PREVIEW} more)</>}
+                                        {showAllMain ? <><ChevronUp className="size-4" />{T[lang].showFewer}</> : <><ChevronDown className="size-4" />{T[lang].showAll(mainServices.length - MAIN_PREVIEW)}</>}
                                     </button>
                                 )}
 
-                                {errors.service_ids && <p className="text-sm text-red-600">{errors.service_ids}</p>}
+                                {errors.service_ids && <p className="text-sm text-red-650">{errors.service_ids}</p>}
 
                                 {selectedServices.length > 0 && !hasMainSelected && (
                                     <p className="rounded-xl px-4 py-3 text-sm" style={{ backgroundColor:'rgba(255,218,169,0.3)', color:'#92400e' }}>
-                                        ⚠ Please also select at least one main service. Add-ons cannot be booked alone.
+                                        {T[lang].mainRequiredWarning}
                                     </p>
                                 )}
 
@@ -163,12 +303,12 @@ export default function Show({ services }: { services: Service[] }) {
                                             style={{ backgroundColor:'var(--pub-surface-low)' }}>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-sm font-semibold" style={{ color:'var(--pub-text)' }}>
-                                                    {showAddons ? 'Hide extra care' : 'Add extra care'}
+                                                    {showAddons ? T[lang].hideExtraCare : T[lang].addExtraCare}
                                                 </span>
                                                 {data.service_ids.some(id => addonServices.find(s => s.id === id)) && (
                                                     <span className="rounded-full px-2 py-0.5 text-xs font-bold"
                                                         style={{ backgroundColor:'var(--pub-sage-fixed)', color:'var(--pub-sage)' }}>
-                                                        {data.service_ids.filter(id => addonServices.find(s => s.id === id)).length} added
+                                                        {T[lang].addedBadge(data.service_ids.filter(id => addonServices.find(s => s.id === id)).length)}
                                                     </span>
                                                 )}
                                             </div>
@@ -176,7 +316,7 @@ export default function Show({ services }: { services: Service[] }) {
                                         </button>
                                         {showAddons && (
                                             <div className="flex flex-col gap-2 p-3" style={{ backgroundColor:'var(--pub-surface)' }}>
-                                                <p className="px-1 text-xs" style={{ color:'var(--pub-text-muted)' }}>Add-ons must be combined with a main service.</p>
+                                                <p className="px-1 text-xs" style={{ color:'var(--pub-text-muted)' }}>{T[lang].addonsCombinedDesc}</p>
                                                 {addonServices.map(s => (
                                                     <SvcCard key={s.id} service={s} selected={data.service_ids.includes(s.id)}
                                                         onToggle={() => toggleService(s.id)} accent="var(--pub-sage-container)" />
@@ -190,7 +330,7 @@ export default function Show({ services }: { services: Service[] }) {
                                 {selectedServices.length > 0 && (
                                     <div className="rounded-xl p-4" style={{ backgroundColor:'var(--pub-surface-low)' }}>
                                         <p className="mb-2 text-xs font-bold uppercase tracking-wider" style={{ color:'var(--pub-text-muted)' }}>
-                                            {selectedServices.length} selected · {totalDuration} min total
+                                            {T[lang].selectedBadge(selectedServices.length, totalDuration)}
                                         </p>
                                         {selectedServices.map(s => (
                                             <div key={s.id} className="flex justify-between text-sm">
@@ -207,9 +347,9 @@ export default function Show({ services }: { services: Service[] }) {
 
                                 {/* Schedule card */}
                                 <section className="pub-card-solid rounded-2xl p-5">
-                                    <h2 className="pub-heading mb-4 text-xl font-semibold" style={{ color:'var(--pub-text)' }}>Choose your schedule</h2>
+                                    <h2 className="pub-heading mb-4 text-xl font-semibold" style={{ color:'var(--pub-text)' }}>{T[lang].chooseSchedule}</h2>
 
-                                    <p className="mb-2 text-xs font-bold uppercase tracking-wider" style={{ color:'var(--pub-text-muted)' }}>Date</p>
+                                    <p className="mb-2 text-xs font-bold uppercase tracking-wider" style={{ color:'var(--pub-text-muted)' }}>{T[lang].dateLabel}</p>
                                     <div className="mb-1 flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth:'none', msOverflowStyle:'none' }}>
                                         {days.map(d => {
                                             const sel = data.date === d.value;
@@ -227,9 +367,9 @@ export default function Show({ services }: { services: Service[] }) {
                                             );
                                         })}
                                     </div>
-                                    {errors.date && <p className="mb-2 text-xs text-red-600">{errors.date}</p>}
+                                    {errors.date && <p className="mb-2 text-xs text-red-650">{errors.date}</p>}
 
-                                    <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-wider" style={{ color:'var(--pub-text-muted)' }}>Preferred time</p>
+                                    <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-wider" style={{ color:'var(--pub-text-muted)' }}>{T[lang].timeLabel}</p>
                                     <div className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-3">
                                         {PREF_TIMES.map(t => {
                                             const sel = data.time === t;
@@ -246,76 +386,76 @@ export default function Show({ services }: { services: Service[] }) {
                                         })}
                                     </div>
 
-                                    <label className="mb-1 block text-xs" style={{ color:'var(--pub-text-muted)' }}>Or enter a custom time:</label>
+                                    <label className="mb-1 block text-xs" style={{ color:'var(--pub-text-muted)' }}>{T[lang].customTimeLabel}</label>
                                     <input id="time" type="time" step="3600" value={data.time}
                                         onChange={e => setData('time', e.target.value)} className={INP} style={INP_S} />
-                                    {errors.time && <p className="mt-1 text-xs text-red-600">{errors.time}</p>}
+                                    {errors.time && <p className="mt-1 text-xs text-red-655">{errors.time}</p>}
                                 </section>
 
                                 {/* Customer details */}
                                 <section className="pub-card-solid rounded-2xl p-5">
-                                    <h2 className="pub-heading mb-4 text-xl font-semibold" style={{ color:'var(--pub-text)' }}>Your details</h2>
+                                    <h2 className="pub-heading mb-4 text-xl font-semibold" style={{ color:'var(--pub-text)' }}>{T[lang].detailsTitle}</h2>
                                     <div className="flex flex-col gap-3">
                                         <div>
-                                            <label htmlFor="name" className="mb-1.5 block text-sm font-semibold" style={{ color:'var(--pub-text)' }}>Full Name <span className="text-red-500">*</span></label>
+                                            <label htmlFor="name" className="mb-1.5 block text-sm font-semibold" style={{ color:'var(--pub-text)' }}>{T[lang].fullNameLabel} <span className="text-red-500">*</span></label>
                                             <input id="name" type="text" autoComplete="name" value={data.name}
-                                                onChange={e => setData('name', e.target.value)} placeholder="e.g. Siti Aminah" className={INP} style={INP_S} />
-                                            {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
+                                                onChange={e => setData('name', e.target.value)} placeholder={T[lang].fullNamePlaceholder} className={INP} style={INP_S} />
+                                            {errors.name && <p className="mt-1 text-xs text-red-655">{errors.name}</p>}
                                         </div>
                                         <div>
-                                            <label htmlFor="phone_number" className="mb-1.5 block text-sm font-semibold" style={{ color:'var(--pub-text)' }}>WhatsApp Number <span className="text-red-500">*</span></label>
+                                            <label htmlFor="phone_number" className="mb-1.5 block text-sm font-semibold" style={{ color:'var(--pub-text)' }}>{T[lang].whatsappLabel} <span className="text-red-500">*</span></label>
                                             <input id="phone_number" type="tel" autoComplete="tel" value={data.phone_number}
-                                                onChange={e => setData('phone_number', e.target.value)} placeholder="e.g. 08123456789" className={INP} style={INP_S} />
-                                            {errors.phone_number && <p className="mt-1 text-xs text-red-600">{errors.phone_number}</p>}
+                                                onChange={e => setData('phone_number', e.target.value)} placeholder={T[lang].whatsappPlaceholder} className={INP} style={INP_S} />
+                                            {errors.phone_number && <p className="mt-1 text-xs text-red-655">{errors.phone_number}</p>}
                                         </div>
                                         <div>
                                             <label htmlFor="customer_note" className="mb-1.5 block text-sm font-semibold" style={{ color:'var(--pub-text)' }}>
-                                                Additional Notes <span className="font-normal" style={{ color:'var(--pub-text-muted)' }}>(optional)</span>
+                                                {T[lang].additionalNotesLabel} <span className="font-normal" style={{ color:'var(--pub-text-muted)' }}>(optional)</span>
                                             </label>
                                             <textarea id="customer_note" rows={2} value={data.customer_note}
                                                 onChange={e => setData('customer_note', e.target.value)}
-                                                placeholder="Any special requests or conditions..." className={INP} style={{ ...INP_S, resize:'none' }} />
-                                            {errors.customer_note && <p className="mt-1 text-xs text-red-600">{errors.customer_note}</p>}
+                                                placeholder={T[lang].additionalNotesPlaceholder} className={INP} style={{ ...INP_S, resize:'none' }} />
+                                            {errors.customer_note && <p className="mt-1 text-xs text-red-655">{errors.customer_note}</p>}
                                         </div>
                                     </div>
                                 </section>
 
                                 {/* Address */}
                                 <section className="pub-card-solid rounded-2xl p-5">
-                                    <h2 className="pub-heading mb-1 text-xl font-semibold" style={{ color:'var(--pub-text)' }}>Where should we come?</h2>
-                                    <p className="mb-4 text-sm" style={{ color:'var(--pub-text-muted)' }}>Enter your home address so our therapist can find you.</p>
+                                    <h2 className="pub-heading mb-1 text-xl font-semibold" style={{ color:'var(--pub-text)' }}>{T[lang].locationTitle}</h2>
+                                    <p className="mb-4 text-sm" style={{ color:'var(--pub-text-muted)' }}>{T[lang].locationDesc}</p>
                                     <div className="flex flex-col gap-3">
                                         <div>
-                                            <label htmlFor="address" className="mb-1.5 block text-sm font-semibold" style={{ color:'var(--pub-text)' }}>Full Address <span className="text-red-500">*</span></label>
+                                            <label htmlFor="address" className="mb-1.5 block text-sm font-semibold" style={{ color:'var(--pub-text)' }}>{T[lang].addressLabel} <span className="text-red-500">*</span></label>
                                             <textarea id="address" rows={3} value={data.address}
                                                 onChange={e => setData('address', e.target.value)}
-                                                placeholder="Street, RT/RW, Kelurahan, Kecamatan, City..." className={INP} style={{ ...INP_S, resize:'none' }} />
-                                            {errors.address && <p className="mt-1 text-xs text-red-600">{errors.address}</p>}
+                                                placeholder={T[lang].addressPlaceholder} className={INP} style={{ ...INP_S, resize:'none' }} />
+                                            {errors.address && <p className="mt-1 text-xs text-red-655">{errors.address}</p>}
                                         </div>
                                         <div>
                                             <label htmlFor="location_note" className="mb-1.5 block text-sm font-semibold" style={{ color:'var(--pub-text)' }}>
-                                                Location Note <span className="font-normal" style={{ color:'var(--pub-text-muted)' }}>(optional)</span>
+                                                {T[lang].locationNoteLabel} <span className="font-normal" style={{ color:'var(--pub-text-muted)' }}>(optional)</span>
                                             </label>
                                             <input id="location_note" type="text" value={data.location_note}
                                                 onChange={e => setData('location_note', e.target.value)}
-                                                placeholder="e.g. Red gate, 2nd house from the left" className={INP} style={INP_S} />
-                                            {errors.location_note && <p className="mt-1 text-xs text-red-600">{errors.location_note}</p>}
+                                                placeholder={T[lang].locationNotePlaceholder} className={INP} style={INP_S} />
+                                            {errors.location_note && <p className="mt-1 text-xs text-red-655">{errors.location_note}</p>}
                                         </div>
                                         <div>
                                             <label htmlFor="maps_url" className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold" style={{ color:'var(--pub-text)' }}>
                                                 <MapPin className="size-3.5" style={{ color:'var(--pub-lavender)' }} />
-                                                Google Maps Link <span className="font-normal" style={{ color:'var(--pub-text-muted)' }}>(optional)</span>
+                                                {T[lang].mapsLabel} <span className="font-normal" style={{ color:'var(--pub-text-muted)' }}>(optional)</span>
                                             </label>
                                             <input id="maps_url" type="url" value={data.maps_url}
                                                 onChange={e => setData('maps_url', e.target.value)}
-                                                placeholder="https://maps.google.com/..." className={INP} style={INP_S} />
-                                            {errors.maps_url && <p className="mt-1 text-xs text-red-600">{errors.maps_url}</p>}
+                                                placeholder={T[lang].mapsPlaceholder} className={INP} style={INP_S} />
+                                            {errors.maps_url && <p className="mt-1 text-xs text-red-655">{errors.maps_url}</p>}
                                         </div>
                                         <div className="flex items-start gap-3 rounded-xl p-4"
                                             style={{ backgroundColor:'rgba(149,170,130,0.12)', border:'1px solid var(--pub-sage-container)' }}>
                                             <Lock className="mt-0.5 size-4 shrink-0" style={{ color:'var(--pub-sage)' }} />
                                             <p className="text-xs leading-relaxed" style={{ color:'var(--pub-sage)' }}>
-                                                Your address is used only for this appointment. No data is shared.
+                                                {T[lang].safetyNotice}
                                             </p>
                                         </div>
                                     </div>
@@ -324,9 +464,9 @@ export default function Show({ services }: { services: Service[] }) {
                                 {/* Order summary + submit */}
                                 <section className="rounded-2xl p-5"
                                     style={{ backgroundColor:'var(--pub-surface)', boxShadow:'0 10px 40px -10px rgba(114,70,180,0.08)', border:'1px solid rgba(204,195,212,0.35)' }}>
-                                    <h2 className="pub-heading mb-4 text-xl font-semibold" style={{ color:'var(--pub-text)' }}>Order Summary</h2>
+                                    <h2 className="pub-heading mb-4 text-xl font-semibold" style={{ color:'var(--pub-text)' }}>{T[lang].summaryTitle}</h2>
                                     {selectedServices.length === 0
-                                        ? <p className="text-sm" style={{ color:'var(--pub-text-muted)' }}>No services selected yet.</p>
+                                        ? <p className="text-sm" style={{ color:'var(--pub-text-muted)' }}>{T[lang].noServicesSelected}</p>
                                         : (
                                             <div className="space-y-2 text-sm">
                                                 {selectedServices.map(s => (
@@ -337,14 +477,14 @@ export default function Show({ services }: { services: Service[] }) {
                                                 ))}
                                                 <div className="border-t pt-3" style={{ borderColor:'rgba(204,195,212,0.4)' }}>
                                                     <div className="flex justify-between font-semibold">
-                                                        <span style={{ color:'var(--pub-text)' }}>Total</span>
+                                                        <span style={{ color:'var(--pub-text)' }}>{T[lang].total}</span>
                                                         <span style={{ color:'var(--pub-lavender)' }}>{formatPrice(serviceTotal)}</span>
                                                     </div>
                                                     <div className="mt-1 flex justify-between text-xs" style={{ color:'var(--pub-text-muted)' }}>
-                                                        <span>DP (required to confirm)</span><span>{formatPrice(dpAmount)}</span>
+                                                        <span>{T[lang].dpAmount}</span><span>{formatPrice(dpAmount)}</span>
                                                     </div>
                                                     <div className="mt-1 flex justify-between text-xs" style={{ color:'var(--pub-text-muted)' }}>
-                                                        <span>Remaining (paid to therapist)</span><span>{formatPrice(remaining)}</span>
+                                                        <span>{T[lang].remaining}</span><span>{formatPrice(remaining)}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -354,15 +494,15 @@ export default function Show({ services }: { services: Service[] }) {
                                         disabled={processing || data.service_ids.length === 0 || !hasMainSelected}
                                         className="mt-5 flex w-full items-center justify-center gap-2 rounded-full py-4 text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
                                         style={{ backgroundColor:'var(--pub-cta)' }}>
-                                        {processing ? 'Submitting…' : 'Confirm Booking'}
+                                        {processing ? T[lang].submitting : T[lang].confirmBtn}
                                     </button>
                                     {!hasMainSelected && data.service_ids.length > 0 && (
                                         <p className="mt-2 text-center text-xs" style={{ color:'#92400e' }}>
-                                            Select at least one main service to continue.
+                                            {T[lang].selectMainToContinue}
                                         </p>
                                     )}
                                     <p className="mt-3 text-center text-xs" style={{ color:'var(--pub-text-muted)' }}>
-                                        We will contact you via WhatsApp to confirm your booking.
+                                        {T[lang].whatsappContactNotice}
                                     </p>
                                 </section>
                             </div>{/* end RIGHT */}
@@ -374,7 +514,7 @@ export default function Show({ services }: { services: Service[] }) {
                     style={{ backgroundColor:'var(--pub-surface-low)', color:'var(--pub-text-muted)' }}>
                     <p>© {new Date().getFullYear()} Home Care Therapy Service</p>
                     <Link href="/" className="mt-1 block transition-opacity hover:opacity-70" style={{ color:'var(--pub-lavender)' }}>
-                        ← Back to home
+                        {T[lang].backToHome}
                     </Link>
                 </footer>
             </div>

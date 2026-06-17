@@ -2,11 +2,8 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// @ts-expect-error - leaflet assets do not have typescript declarations
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
-// @ts-expect-error - leaflet assets do not have typescript declarations
-// @ts-expect-error - leaflet assets do not have typescript declarations
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 import { Check, ChevronDown, ChevronUp, Lock, MapPin, Navigation } from 'lucide-react';
@@ -110,6 +107,9 @@ const T = {
         locating: 'Mencari...',
         mapInstruction: 'Geser penanda (marker) atau klik pada peta untuk menentukan posisi akurat Anda.',
         coordinatesLabel: 'Koordinat',
+        mapHelper: 'Gunakan lokasi saya hanya jika Anda sedang berada di alamat kunjungan. Jika titik belum tepat, geser pin pada peta.',
+        lowAccuracyWarning: 'Lokasi mungkin belum akurat. Silakan geser pin agar sesuai alamat.',
+        noCoordinatesInfo: 'Belum ada titik koordinat terpilih. Anda tetap dapat mengisi alamat dan memilih titik secara manual di peta.',
     },
     en: {
         title: 'Book a Session — Home Care Therapy',
@@ -158,6 +158,9 @@ const T = {
         locating: 'Locating...',
         mapInstruction: 'Drag the marker or click on the map to pinpoint your exact location.',
         coordinatesLabel: 'Coordinates',
+        mapHelper: 'Use my current location only if you are currently at the visit address. If the point is not accurate, drag the pin on the map.',
+        lowAccuracyWarning: 'Your location may not be accurate. Please drag the pin to match the address.',
+        noCoordinatesInfo: 'No coordinate selected yet. You can still type the address and select a point manually on the map.',
     }
 };
 
@@ -225,17 +228,22 @@ export default function Show({ services }: { services: Service[] }) {
     const markerRef = useRef<L.Marker | null>(null);
     const [geoLoading, setGeoLoading] = useState(false);
     const [geoError, setGeoError] = useState<string | null>(null);
+    const [geoAccuracy, setGeoAccuracy] = useState<number | null>(null);
 
     const defaultCenter: [number, number] = [-6.2, 106.8]; // Jakarta/Tangerang/Bekasi
     const defaultZoom = 12;
 
-    const updateCoordinates = (lat: number, lng: number) => {
+    const updateCoordinates = (lat: number, lng: number, resetAccuracy = false) => {
         setData((prev) => ({
             ...prev,
             latitude: lat,
             longitude: lng,
             maps_url: `https://www.google.com/maps?q=${lat},${lng}`,
         }));
+
+        if (resetAccuracy) {
+            setGeoAccuracy(null);
+        }
     };
 
     useEffect(() => {
@@ -263,13 +271,13 @@ return;
         // Update coordinate states on drag end
         marker.on('dragend', () => {
             const position = marker.getLatLng();
-            updateCoordinates(position.lat, position.lng);
+            updateCoordinates(position.lat, position.lng, true);
         });
 
         // Click map to reposition marker
         map.on('click', (e) => {
             marker.setLatLng(e.latlng);
-            updateCoordinates(e.latlng.lat, e.latlng.lng);
+            updateCoordinates(e.latlng.lat, e.latlng.lng, true);
         });
 
         return () => {
@@ -293,8 +301,9 @@ return;
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                const { latitude, longitude } = position.coords;
-                updateCoordinates(latitude, longitude);
+                const { latitude, longitude, accuracy } = position.coords;
+                setGeoAccuracy(accuracy);
+                updateCoordinates(latitude, longitude, false);
 
                 // Update map view and marker position
                 if (mapRef.current) {
@@ -577,7 +586,7 @@ return;
                                         </div>
 
                                         {/* Map coordinates picker */}
-                                        <div className="space-y-2">
+                                        <div className="space-y-3">
                                             <div className="flex flex-wrap items-center justify-between gap-2">
                                                 <label className="flex items-center gap-1.5 text-sm font-semibold" style={{ color:'var(--pub-text)' }}>
                                                     <MapPin className="size-3.5" style={{ color:'var(--pub-lavender)' }} />
@@ -599,6 +608,16 @@ return;
                                                 </button>
                                             </div>
 
+                                            <p className="text-xs leading-relaxed" style={{ color:'var(--pub-text-muted)' }}>
+                                                {T[lang].mapHelper}
+                                            </p>
+
+                                            {geoAccuracy !== null && geoAccuracy > 100 && (
+                                                <div className="text-xs p-3 rounded-xl border border-amber-200 bg-amber-50/50 text-amber-800 dark:border-amber-900/30 dark:bg-amber-950/20 dark:text-amber-300">
+                                                    ⚠ {T[lang].lowAccuracyWarning}
+                                                </div>
+                                            )}
+
                                             <div className="relative w-full rounded-xl overflow-hidden border border-neutral-200" style={{ height: '260px', zIndex: 10 }}>
                                                 <div ref={mapContainerRef} className="w-full h-full text-black" />
                                             </div>
@@ -613,10 +632,19 @@ return;
                                                 </p>
                                             )}
 
-                                            {data.latitude && data.longitude && (
+                                            {data.latitude && data.longitude ? (
                                                 <div className="text-xs p-3 rounded-xl border space-y-1" style={{ backgroundColor: 'var(--pub-surface-container)', borderColor: 'var(--pub-border)', color: 'var(--pub-text)' }}>
-                                                    <p><span className="font-semibold">{T[lang].coordinatesLabel}:</span> {data.latitude.toFixed(6)}, {data.longitude.toFixed(6)}</p>
+                                                    <p className="flex items-center justify-between">
+                                                        <span><span className="font-semibold">{T[lang].coordinatesLabel}:</span> {data.latitude.toFixed(6)}, {data.longitude.toFixed(6)}</span>
+                                                        {geoAccuracy !== null && <span className="opacity-75 text-[10px]">({lang === 'id' ? 'Akurasi' : 'Accuracy'}: ±{Math.round(geoAccuracy)}m)</span>}
+                                                    </p>
                                                     <p className="truncate"><span className="font-semibold">URL:</span> <span className="opacity-80">{data.maps_url}</span></p>
+                                                </div>
+                                            ) : (
+                                                <div className="text-xs p-3.5 rounded-xl border border-dashed text-center" style={{ borderColor: 'var(--pub-border)', color: 'var(--pub-text-muted)', backgroundColor: 'rgba(0,0,0,0.01)' }}>
+                                                    <p className="leading-relaxed">
+                                                        {T[lang].noCoordinatesInfo}
+                                                    </p>
                                                 </div>
                                             )}
                                         </div>

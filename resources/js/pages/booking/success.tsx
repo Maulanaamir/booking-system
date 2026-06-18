@@ -19,6 +19,8 @@ type AppointmentSummary = {
     dp_amount: number;
     remaining_payment: number;
     status: string;
+    payment_status: string;
+    xendit_invoice_url: string | null;
 };
 
 function formatPrice(price: number): string {
@@ -57,10 +59,15 @@ const T = {
         dpToConfirm: 'DP untuk Konfirmasi',
         remaining: 'Sisa Pembayaran',
         safetyNotice: 'Alamat Anda hanya digunakan untuk janji temu ini. Keamanan dan kenyamanan Anda adalah prioritas kami.',
-        nextStepsTitle: 'Langkah Selanjutnya: Transfer DP',
-        nextStepsDesc: (priceStr: string) => `Silakan transfer uang muka sebesar ${priceStr} untuk mengamankan slot jadwal Anda. Panduan pembayaran lengkap akan dikirimkan oleh admin kami via WhatsApp sebentar lagi.`,
+        nextStepsTitle: 'Langkah Selanjutnya: Pembayaran DP',
+        nextStepsDesc: (priceStr: string) => `Silakan selesaikan pembayaran DP sebesar ${priceStr} untuk mengamankan slot jadwal Anda. Anda dapat membayar menggunakan tombol di bawah ini.`,
         bookAnother: 'Pesan Sesi Lainnya',
         backToHome: 'Kembali ke Beranda',
+        payDpNow: 'Bayar DP Sekarang',
+        paymentStatusLabel: 'Status Pembayaran',
+        unpaidStatus: 'Belum Dibayar',
+        paidStatus: 'Sudah Dibayar',
+        fallbackMessage: 'Link pembayaran otomatis belum tersedia. Silakan hubungi admin untuk konfirmasi pembayaran DP.',
     },
     en: {
         title: 'Booking Received — Home Care Therapy',
@@ -75,10 +82,15 @@ const T = {
         dpToConfirm: 'DP to confirm',
         remaining: 'Remaining',
         safetyNotice: 'Your address is used only for this appointment. Your comfort and safety come first.',
-        nextStepsTitle: 'Next: complete your DP payment',
-        nextStepsDesc: (priceStr: string) => `Pay the DP of ${priceStr} to secure your slot. Our team will send the payment instructions via WhatsApp shortly.`,
+        nextStepsTitle: 'Next: Complete DP Payment',
+        nextStepsDesc: (priceStr: string) => `Please complete the DP payment of ${priceStr} to secure your slot. You can pay using the button below.`,
         bookAnother: 'Book Another Session',
         backToHome: 'Back to Home',
+        payDpNow: 'Pay DP Now',
+        paymentStatusLabel: 'Payment Status',
+        unpaidStatus: 'Unpaid',
+        paidStatus: 'Paid',
+        fallbackMessage: 'Automatic payment link is not available yet. Please contact admin to confirm your DP payment.',
     }
 };
 
@@ -330,6 +342,20 @@ export default function Success({
                                             )}
                                         </span>
                                     </div>
+                                    <div className="flex justify-between gap-4 border-t pt-2 mt-2" style={{ borderColor: 'rgba(204,195,212,0.25)' }}>
+                                        <span style={{ color: 'var(--pub-text-sub)' }}>
+                                            {T[lang].paymentStatusLabel}
+                                        </span>
+                                        <span
+                                            className="font-semibold text-xs rounded-full px-2 py-0.5"
+                                            style={{
+                                                color: appointment.payment_status === 'paid' ? '#166534' : '#991b1b',
+                                                backgroundColor: appointment.payment_status === 'paid' ? '#dcfce7' : '#fee2e2',
+                                            }}
+                                        >
+                                            {appointment.payment_status === 'paid' ? T[lang].paidStatus : T[lang].unpaidStatus}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -354,31 +380,64 @@ export default function Success({
                             </div>
 
                             {/* DP instruction */}
-                            <div
-                                className="rounded-2xl p-4"
-                                style={{
-                                    backgroundColor: 'rgba(255,218,169,0.28)',
-                                    border: '1px solid rgba(217,119,6,0.25)',
-                                }}
-                            >
-                                <p
-                                    className="mb-1 text-sm font-semibold"
-                                    style={{ color: '#92400e' }}
+                            {appointment.xendit_invoice_url ? (
+                                <div
+                                    className="rounded-2xl p-4"
+                                    style={{
+                                        backgroundColor: 'rgba(255,218,169,0.28)',
+                                        border: '1px solid rgba(217,119,6,0.25)',
+                                    }}
                                 >
-                                    {T[lang].nextStepsTitle}
-                                </p>
-                                <p
-                                    className="text-sm leading-relaxed"
-                                    style={{ color: '#a16207' }}
+                                    <p
+                                        className="mb-1 text-sm font-semibold"
+                                        style={{ color: '#92400e' }}
+                                    >
+                                        {T[lang].nextStepsTitle}
+                                    </p>
+                                    <p
+                                        className="text-sm leading-relaxed"
+                                        style={{ color: '#a16207' }}
+                                    >
+                                        {T[lang].nextStepsDesc(formatPrice(appointment.dp_amount))}
+                                    </p>
+                                </div>
+                            ) : (
+                                <div
+                                    className="rounded-2xl p-4 border"
+                                    style={{
+                                        backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                                        borderColor: 'rgba(239, 68, 68, 0.25)',
+                                    }}
                                 >
-                                    {T[lang].nextStepsDesc(formatPrice(appointment.dp_amount))}
-                                </p>
-                            </div>
+                                    <p
+                                        className="mb-1 text-sm font-semibold"
+                                        style={{ color: '#b91c1c' }}
+                                    >
+                                        ⚠️ {lang === 'id' ? 'Link Pembayaran Belum Tersedia' : 'Payment Link Unavailable'}
+                                    </p>
+                                    <p
+                                        className="text-sm leading-relaxed"
+                                        style={{ color: '#b91c1c' }}
+                                    >
+                                        {T[lang].fallbackMessage}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </section>
 
                     {/* Actions */}
                     <div className="mt-5 flex flex-col gap-3">
+                        {appointment.xendit_invoice_url && appointment.payment_status !== 'paid' && (
+                            <a
+                                href={appointment.xendit_invoice_url}
+                                className="block w-full rounded-full px-6 py-4 text-center text-sm font-bold text-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg hover:brightness-110"
+                                style={{ backgroundColor: 'var(--pub-lavender)' }}
+                            >
+                                💳 {T[lang].payDpNow}
+                            </a>
+                        )}
+
                         <Link
                             href={bookingShow()}
                             className="block w-full rounded-full px-6 py-4 text-center text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg"

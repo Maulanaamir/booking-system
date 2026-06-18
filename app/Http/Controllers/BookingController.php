@@ -23,9 +23,36 @@ class BookingController extends Controller
         ]);
     }
 
-    public function store(BookingRequest $request, StoreBookingAction $action): RedirectResponse
-    {
+    public function store(
+        BookingRequest $request,
+        StoreBookingAction $action,
+        \App\Services\XenditPaymentService $paymentService
+    ): RedirectResponse {
         $appointment = $action->handle($request);
+
+        $paymentData = $paymentService->createDpPaymentLink($appointment);
+
+        if ($paymentData) {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($appointment, $paymentData) {
+                $appointment->update([
+                    'xendit_external_id' => $paymentData['external_id'],
+                    'xendit_invoice_id' => $paymentData['invoice_id'],
+                    'xendit_invoice_url' => $paymentData['invoice_url'],
+                    'invoice_expired_at' => $paymentData['expired_at'],
+                ]);
+
+                $appointment->payments()->create([
+                    'provider' => 'xendit',
+                    'provider_reference_id' => $paymentData['external_id'],
+                    'provider_invoice_id' => $paymentData['invoice_id'],
+                    'payment_url' => $paymentData['invoice_url'],
+                    'amount' => $appointment->dp_amount,
+                    'currency' => 'IDR',
+                    'status' => 'pending',
+                    'expired_at' => $paymentData['expired_at'],
+                ]);
+            });
+        }
 
         return to_route('booking.success', $appointment);
     }
@@ -41,6 +68,8 @@ class BookingController extends Controller
                 'dp_amount',
                 'remaining_payment',
                 'status',
+                'payment_status',
+                'xendit_invoice_url',
             ]),
         ]);
     }

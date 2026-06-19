@@ -39,10 +39,13 @@ function formatDate(dateStr: string, lang: 'id' | 'en'): string {
 }
 
 function formatTime(dateStr: string, lang: 'id' | 'en'): string {
-    return new Date(dateStr).toLocaleTimeString(lang === 'id' ? 'id-ID' : 'en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
+    return new Date(dateStr).toLocaleTimeString(
+        lang === 'id' ? 'id-ID' : 'en-US',
+        {
+            hour: '2-digit',
+            minute: '2-digit',
+        },
+    );
 }
 
 const T = {
@@ -50,7 +53,8 @@ const T = {
         title: 'Pemesanan Diterima — Home Care Therapy',
         receivedTag: 'Pemesanan Diterima',
         allSetTitle: 'Semua Sudah Siap',
-        successDesc: 'Permintaan pemesanan terapi di rumah Anda telah kami terima. Kami akan menghubungi Anda segera melalui WhatsApp untuk mengonfirmasi sesi dan metode pembayaran DP.',
+        successDesc:
+            'Permintaan pemesanan terapi di rumah Anda telah kami terima. Kami akan menghubungi Anda segera melalui WhatsApp untuk mengonfirmasi sesi dan metode pembayaran DP.',
         reference: 'Nomor Referensi',
         schedule: 'Jadwal Sesi',
         endsApprox: (timeStr: string) => `Selesai sekitar jam ${timeStr}`,
@@ -58,22 +62,26 @@ const T = {
         total: 'Total Biaya',
         dpToConfirm: 'DP untuk Konfirmasi',
         remaining: 'Sisa Pembayaran',
-        safetyNotice: 'Alamat Anda hanya digunakan untuk janji temu ini. Keamanan dan kenyamanan Anda adalah prioritas kami.',
+        safetyNotice:
+            'Alamat Anda hanya digunakan untuk janji temu ini. Keamanan dan kenyamanan Anda adalah prioritas kami.',
         nextStepsTitle: 'Langkah Selanjutnya: Pembayaran DP',
-        nextStepsDesc: (priceStr: string) => `Silakan selesaikan pembayaran DP sebesar ${priceStr} untuk mengamankan slot jadwal Anda. Anda dapat membayar menggunakan tombol di bawah ini.`,
+        nextStepsDesc: (priceStr: string) =>
+            `Silakan selesaikan pembayaran DP sebesar ${priceStr} untuk mengamankan slot jadwal Anda. Anda dapat membayar menggunakan tombol di bawah ini.`,
         bookAnother: 'Pesan Sesi Lainnya',
         backToHome: 'Kembali ke Beranda',
         payDpNow: 'Bayar DP Sekarang',
         paymentStatusLabel: 'Status Pembayaran',
         unpaidStatus: 'Belum Dibayar',
         paidStatus: 'Sudah Dibayar',
-        fallbackMessage: 'Link pembayaran otomatis belum tersedia. Silakan hubungi admin untuk konfirmasi pembayaran DP.',
+        fallbackMessage:
+            'Link pembayaran otomatis belum tersedia. Silakan hubungi admin untuk konfirmasi pembayaran DP.',
     },
     en: {
         title: 'Booking Received — Home Care Therapy',
         receivedTag: 'Booking received',
         allSetTitle: "You're all set",
-        successDesc: "Your booking request has been received. We'll contact you via WhatsApp to confirm your session and DP payment.",
+        successDesc:
+            "Your booking request has been received. We'll contact you via WhatsApp to confirm your session and DP payment.",
         reference: 'Reference',
         schedule: 'Schedule',
         endsApprox: (timeStr: string) => `Ends approx. ${timeStr}`,
@@ -81,17 +89,20 @@ const T = {
         total: 'Total',
         dpToConfirm: 'DP to confirm',
         remaining: 'Remaining',
-        safetyNotice: 'Your address is used only for this appointment. Your comfort and safety come first.',
+        safetyNotice:
+            'Your address is used only for this appointment. Your comfort and safety come first.',
         nextStepsTitle: 'Next: Complete DP Payment',
-        nextStepsDesc: (priceStr: string) => `Please complete the DP payment of ${priceStr} to secure your slot. You can pay using the button below.`,
+        nextStepsDesc: (priceStr: string) =>
+            `Please complete the DP payment of ${priceStr} to secure your slot. You can pay using the button below.`,
         bookAnother: 'Book Another Session',
         backToHome: 'Back to Home',
         payDpNow: 'Pay DP Now',
         paymentStatusLabel: 'Payment Status',
         unpaidStatus: 'Unpaid',
         paidStatus: 'Paid',
-        fallbackMessage: 'Automatic payment link is not available yet. Please contact admin to confirm your DP payment.',
-    }
+        fallbackMessage:
+            'Automatic payment link is not available yet. Please contact admin to confirm your DP payment.',
+    },
 };
 
 export default function Success({
@@ -118,17 +129,14 @@ export default function Success({
         <>
             <Head>
                 <title>{T[lang].title}</title>
-                <meta
-                    name="description"
-                    content={T[lang].successDesc}
-                />
+                <meta name="description" content={T[lang].successDesc} />
             </Head>
 
             <div className="public-page relative min-h-screen overflow-hidden px-5 py-10">
                 {/* Ambient background */}
                 <div
                     aria-hidden
-                    className="pub-blob pub-blob-rose fixed -right-24 -top-24 h-[360px] w-[360px]"
+                    className="pub-blob pub-blob-rose fixed -top-24 -right-24 h-[360px] w-[360px]"
                 />
                 <div
                     aria-hidden
@@ -137,7 +145,13 @@ export default function Success({
 
                 {/* Header-like row inside page for mobile/tablet language toggle */}
                 <div className="absolute top-5 right-5 z-20">
-                    <div className="flex items-center gap-1 rounded-full border p-1" style={{ borderColor: 'var(--pub-border)', backgroundColor: 'var(--pub-surface)' }}>
+                    <div
+                        className="flex items-center gap-1 rounded-full border p-1"
+                        style={{
+                            borderColor: 'var(--pub-border)',
+                            backgroundColor: 'var(--pub-surface)',
+                        }}
+                    >
                         <button
                             type="button"
                             onClick={() => changeLang('id')}
@@ -187,12 +201,14 @@ export default function Success({
                     >
                         {/* Top visual */}
                         <div
-                            className="relative px-6 pb-7 pt-8 text-center"
-                            style={{ backgroundColor: 'var(--pub-surface-low)' }}
+                            className="relative px-6 pt-8 pb-7 text-center"
+                            style={{
+                                backgroundColor: 'var(--pub-surface-low)',
+                            }}
                         >
                             <div
                                 aria-hidden
-                                className="absolute -right-12 -top-16 h-40 w-40 rounded-full blur-3xl"
+                                className="absolute -top-16 -right-12 h-40 w-40 rounded-full blur-3xl"
                                 style={{
                                     backgroundColor: 'rgba(223,168,168,0.32)',
                                 }}
@@ -216,7 +232,7 @@ export default function Success({
                             </div>
 
                             <p
-                                className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
+                                className="mb-2 text-xs font-bold tracking-[0.18em] uppercase"
                                 style={{ color: 'var(--pub-rose)' }}
                             >
                                 {T[lang].receivedTag}
@@ -241,11 +257,12 @@ export default function Success({
                             <div
                                 className="rounded-2xl p-4"
                                 style={{
-                                    backgroundColor: 'var(--pub-surface-container)',
+                                    backgroundColor:
+                                        'var(--pub-surface-container)',
                                 }}
                             >
                                 <p
-                                    className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider"
+                                    className="mb-1 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
                                     style={{ color: 'var(--pub-text-muted)' }}
                                 >
                                     <ReceiptText className="size-3.5" />
@@ -268,7 +285,7 @@ export default function Success({
                                 }}
                             >
                                 <p
-                                    className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider"
+                                    className="mb-3 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
                                     style={{ color: 'var(--pub-text-muted)' }}
                                 >
                                     <CalendarCheck className="size-3.5" />
@@ -276,7 +293,7 @@ export default function Success({
                                 </p>
 
                                 <p
-                                    className="text-sm font-semibold leading-relaxed"
+                                    className="text-sm leading-relaxed font-semibold"
                                     style={{ color: 'var(--pub-text)' }}
                                 >
                                     {formatDate(appointment.start_at, lang)}
@@ -286,7 +303,12 @@ export default function Success({
                                     style={{ color: 'var(--pub-text-muted)' }}
                                 >
                                     <Clock className="size-3.5" />
-                                    {T[lang].endsApprox(formatTime(appointment.service_end_at, lang))}
+                                    {T[lang].endsApprox(
+                                        formatTime(
+                                            appointment.service_end_at,
+                                            lang,
+                                        ),
+                                    )}
                                 </p>
                             </div>
 
@@ -299,7 +321,7 @@ export default function Success({
                                 }}
                             >
                                 <p
-                                    className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider"
+                                    className="mb-3 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
                                     style={{ color: 'var(--pub-text-muted)' }}
                                 >
                                     <CreditCard className="size-3.5" />
@@ -308,52 +330,91 @@ export default function Success({
 
                                 <div className="space-y-2 text-sm">
                                     <div className="flex justify-between gap-4">
-                                        <span style={{ color: 'var(--pub-text-sub)' }}>
+                                        <span
+                                            style={{
+                                                color: 'var(--pub-text-sub)',
+                                            }}
+                                        >
                                             {T[lang].total}
                                         </span>
                                         <span
                                             className="font-semibold"
                                             style={{ color: 'var(--pub-text)' }}
                                         >
-                                            {formatPrice(appointment.total_price)}
+                                            {formatPrice(
+                                                appointment.total_price,
+                                            )}
                                         </span>
                                     </div>
                                     <div className="flex justify-between gap-4">
-                                        <span style={{ color: 'var(--pub-text-sub)' }}>
+                                        <span
+                                            style={{
+                                                color: 'var(--pub-text-sub)',
+                                            }}
+                                        >
                                             {T[lang].dpToConfirm}
                                         </span>
                                         <span
                                             className="font-semibold"
-                                            style={{ color: 'var(--pub-lavender)' }}
+                                            style={{
+                                                color: 'var(--pub-lavender)',
+                                            }}
                                         >
                                             {formatPrice(appointment.dp_amount)}
                                         </span>
                                     </div>
                                     <div className="flex justify-between gap-4">
-                                        <span style={{ color: 'var(--pub-text-sub)' }}>
+                                        <span
+                                            style={{
+                                                color: 'var(--pub-text-sub)',
+                                            }}
+                                        >
                                             {T[lang].remaining}
                                         </span>
                                         <span
                                             className="font-medium"
-                                            style={{ color: 'var(--pub-text-muted)' }}
+                                            style={{
+                                                color: 'var(--pub-text-muted)',
+                                            }}
                                         >
                                             {formatPrice(
                                                 appointment.remaining_payment,
                                             )}
                                         </span>
                                     </div>
-                                    <div className="flex justify-between gap-4 border-t pt-2 mt-2" style={{ borderColor: 'rgba(204,195,212,0.25)' }}>
-                                        <span style={{ color: 'var(--pub-text-sub)' }}>
+                                    <div
+                                        className="mt-2 flex justify-between gap-4 border-t pt-2"
+                                        style={{
+                                            borderColor:
+                                                'rgba(204,195,212,0.25)',
+                                        }}
+                                    >
+                                        <span
+                                            style={{
+                                                color: 'var(--pub-text-sub)',
+                                            }}
+                                        >
                                             {T[lang].paymentStatusLabel}
                                         </span>
                                         <span
-                                            className="font-semibold text-xs rounded-full px-2 py-0.5"
+                                            className="rounded-full px-2 py-0.5 text-xs font-semibold"
                                             style={{
-                                                color: appointment.payment_status === 'paid' ? '#166534' : '#991b1b',
-                                                backgroundColor: appointment.payment_status === 'paid' ? '#dcfce7' : '#fee2e2',
+                                                color:
+                                                    appointment.payment_status ===
+                                                    'paid'
+                                                        ? '#166534'
+                                                        : '#991b1b',
+                                                backgroundColor:
+                                                    appointment.payment_status ===
+                                                    'paid'
+                                                        ? '#dcfce7'
+                                                        : '#fee2e2',
                                             }}
                                         >
-                                            {appointment.payment_status === 'paid' ? T[lang].paidStatus : T[lang].unpaidStatus}
+                                            {appointment.payment_status ===
+                                            'paid'
+                                                ? T[lang].paidStatus
+                                                : T[lang].unpaidStatus}
                                         </span>
                                     </div>
                                 </div>
@@ -384,7 +445,8 @@ export default function Success({
                                 <div
                                     className="rounded-2xl p-4"
                                     style={{
-                                        backgroundColor: 'rgba(255,218,169,0.28)',
+                                        backgroundColor:
+                                            'rgba(255,218,169,0.28)',
                                         border: '1px solid rgba(217,119,6,0.25)',
                                     }}
                                 >
@@ -398,14 +460,17 @@ export default function Success({
                                         className="text-sm leading-relaxed"
                                         style={{ color: '#a16207' }}
                                     >
-                                        {T[lang].nextStepsDesc(formatPrice(appointment.dp_amount))}
+                                        {T[lang].nextStepsDesc(
+                                            formatPrice(appointment.dp_amount),
+                                        )}
                                     </p>
                                 </div>
                             ) : (
                                 <div
-                                    className="rounded-2xl p-4 border"
+                                    className="rounded-2xl border p-4"
                                     style={{
-                                        backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                                        backgroundColor:
+                                            'rgba(239, 68, 68, 0.08)',
                                         borderColor: 'rgba(239, 68, 68, 0.25)',
                                     }}
                                 >
@@ -413,7 +478,10 @@ export default function Success({
                                         className="mb-1 text-sm font-semibold"
                                         style={{ color: '#b91c1c' }}
                                     >
-                                        ⚠️ {lang === 'id' ? 'Link Pembayaran Belum Tersedia' : 'Payment Link Unavailable'}
+                                        ⚠️{' '}
+                                        {lang === 'id'
+                                            ? 'Link Pembayaran Belum Tersedia'
+                                            : 'Payment Link Unavailable'}
                                     </p>
                                     <p
                                         className="text-sm leading-relaxed"
@@ -428,15 +496,18 @@ export default function Success({
 
                     {/* Actions */}
                     <div className="mt-5 flex flex-col gap-3">
-                        {appointment.xendit_invoice_url && appointment.payment_status !== 'paid' && (
-                            <a
-                                href={appointment.xendit_invoice_url}
-                                className="block w-full rounded-full px-6 py-4 text-center text-sm font-bold text-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg hover:brightness-110"
-                                style={{ backgroundColor: 'var(--pub-lavender)' }}
-                            >
-                                💳 {T[lang].payDpNow}
-                            </a>
-                        )}
+                        {appointment.xendit_invoice_url &&
+                            appointment.payment_status !== 'paid' && (
+                                <a
+                                    href={appointment.xendit_invoice_url}
+                                    className="block w-full rounded-full px-6 py-4 text-center text-sm font-bold text-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg hover:brightness-110"
+                                    style={{
+                                        backgroundColor: 'var(--pub-lavender)',
+                                    }}
+                                >
+                                    💳 {T[lang].payDpNow}
+                                </a>
+                            )}
 
                         <Link
                             href={bookingShow()}

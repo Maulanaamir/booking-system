@@ -236,7 +236,7 @@ export default function Index({
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="flex gap-2">
+                            <div className="flex w-full gap-2 md:w-auto">
                                 <Button
                                     type="submit"
                                     className="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 text-white transition-colors hover:bg-violet-700 md:flex-none dark:bg-violet-700 dark:hover:bg-violet-800"
@@ -550,7 +550,7 @@ export default function Index({
 
                     {/* Pagination */}
                     {appointments.last_page > 1 && (
-                        <div className="mt-6 flex items-center justify-center gap-1">
+                        <div className="mt-6 flex flex-wrap items-center justify-center gap-1">
                             {appointments.links.map((link, i) => (
                                 <Button
                                     key={i}

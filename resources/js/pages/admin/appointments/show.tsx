@@ -303,7 +303,7 @@ export default function Show({
                                             submitStatusUpdate('completed')
                                         }
                                         disabled={processing}
-                                        className="h-10 w-full rounded-xl border-none bg-blue-600 font-semibold text-white shadow-none hover:bg-blue-700 sm:w-auto dark:bg-blue-700 dark:hover:bg-blue-800"
+                                        className="h-10 w-full rounded-xl border-none bg-emerald-600 font-semibold text-white shadow-none hover:bg-emerald-700 sm:w-auto dark:bg-emerald-700 dark:hover:bg-emerald-800"
                                     >
                                         Complete Booking
                                     </Button>

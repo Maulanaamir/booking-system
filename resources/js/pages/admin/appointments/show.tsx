@@ -793,7 +793,7 @@ export default function Show({
                                         processing ||
                                         selectedStatus === appointment.status
                                     }
-                                    className="h-10 w-full rounded-xl bg-neutral-900 text-white transition-colors hover:bg-neutral-800 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+                                    className="h-10 w-full rounded-xl bg-primary text-primary-foreground transition-colors hover:bg-primary/95"
                                 >
                                     {processing ? 'Saving...' : 'Save Status'}
                                 </Button>

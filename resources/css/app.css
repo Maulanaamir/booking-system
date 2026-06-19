@@ -149,23 +149,23 @@
 
 .public-page {
     /* Palette */
-    --pub-cream:            #FFF8F1;
-    --pub-surface:          #FFFFFF;
-    --pub-surface-low:      #FBF2ED;
-    --pub-surface-container:#F5ECE7;
-    --pub-lavender:         #7246B4;
-    --pub-cta:              #B98CFF;
-    --pub-cta-fixed:        #ECDCFF;
-    --pub-rose:             #7F5353;
-    --pub-rose-fixed:       #FFDAD9;
-    --pub-rose-dim:         #F1B8B8;
-    --pub-sage:             #526442;
-    --pub-sage-fixed:       #D5E9BF;
-    --pub-sage-container:   #96A982;
-    --pub-text:             #1E1B18;
-    --pub-text-sub:         #4A4452;
-    --pub-text-muted:       #7A716A;
-    --pub-border:           #CCC3D4;
+    --pub-cream: #fff8f1;
+    --pub-surface: #ffffff;
+    --pub-surface-low: #fbf2ed;
+    --pub-surface-container: #f5ece7;
+    --pub-lavender: #7246b4;
+    --pub-cta: #b98cff;
+    --pub-cta-fixed: #ecdcff;
+    --pub-rose: #7f5353;
+    --pub-rose-fixed: #ffdad9;
+    --pub-rose-dim: #f1b8b8;
+    --pub-sage: #526442;
+    --pub-sage-fixed: #d5e9bf;
+    --pub-sage-container: #96a982;
+    --pub-text: #1e1b18;
+    --pub-text-sub: #4a4452;
+    --pub-text-muted: #7a716a;
+    --pub-border: #ccc3d4;
 
     background-color: var(--pub-cream);
     color: var(--pub-text);
@@ -186,11 +186,11 @@
     filter: blur(60px);
 }
 .pub-blob-rose {
-    background-color: #DFA8A8;
+    background-color: #dfa8a8;
     opacity: 0.18;
 }
 .pub-blob-lavender {
-    background-color: #ECDCFF;
+    background-color: #ecdcff;
     opacity: 0.45;
 }
 
@@ -205,7 +205,7 @@
 
 /* Solid white card (no glass) */
 .pub-card-solid {
-    background: #FFFFFF;
+    background: #ffffff;
     border: 1px solid rgba(204, 195, 212, 0.35);
     box-shadow: 0 8px 30px -8px rgba(114, 70, 180, 0.07);
 }
@@ -213,12 +213,14 @@
 /* Input focus glow */
 .pub-input-glow:focus-within {
     box-shadow: 0 0 0 3px rgba(185, 140, 255, 0.25);
-    border-color: #B98CFF !important;
+    border-color: #b98cff !important;
 }
 
 /* Soft card hover lift */
 .pub-hover-lift {
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
 }
 .pub-hover-lift:hover {
     transform: translateY(-4px);

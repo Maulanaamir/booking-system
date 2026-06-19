@@ -1,10 +1,5 @@
 import { Link } from '@inertiajs/react';
-import {
-    Calendar,
-    ClipboardList,
-    LayoutGrid,
-    Users,
-} from 'lucide-react';
+import { Calendar, ClipboardList, LayoutGrid, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';

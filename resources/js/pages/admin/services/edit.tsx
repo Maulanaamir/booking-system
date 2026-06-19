@@ -69,7 +69,7 @@ export default function Edit({ service }: { service: Service }) {
                                 <InputError message={errors.description} />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div className="grid gap-2">
                                     <Label htmlFor="duration_minutes">
                                         Duration (minutes)
@@ -103,8 +103,8 @@ export default function Edit({ service }: { service: Service }) {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="flex items-center gap-2">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div className="flex items-center gap-2 pt-2 sm:pt-0">
                                     <input
                                         type="hidden"
                                         name="is_main_service"
@@ -123,7 +123,7 @@ export default function Edit({ service }: { service: Service }) {
                                     </Label>
                                 </div>
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 pt-2 sm:pt-0">
                                     <input
                                         type="hidden"
                                         name="is_active"
@@ -141,7 +141,7 @@ export default function Edit({ service }: { service: Service }) {
                                 </div>
                             </div>
 
-                            <div className="grid max-w-32 gap-2">
+                            <div className="grid max-w-full gap-2 sm:max-w-32">
                                 <Label htmlFor="sort_order">Sort order</Label>
                                 <Input
                                     id="sort_order"
@@ -155,7 +155,10 @@ export default function Edit({ service }: { service: Service }) {
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <Button disabled={processing}>
+                                <Button
+                                    disabled={processing}
+                                    className="w-full sm:w-auto"
+                                >
                                     {processing ? 'Saving...' : 'Save'}
                                 </Button>
                             </div>

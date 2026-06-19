@@ -85,7 +85,10 @@ export default function Edit({ therapist }: { therapist: Therapist }) {
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <Button disabled={processing}>
+                                <Button
+                                    disabled={processing}
+                                    className="w-full sm:w-auto"
+                                >
                                     {processing ? 'Saving...' : 'Save'}
                                 </Button>
                             </div>

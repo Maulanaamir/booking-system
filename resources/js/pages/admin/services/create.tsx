@@ -54,7 +54,7 @@ export default function Create() {
                                 <InputError message={errors.description} />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div className="grid gap-2">
                                     <Label htmlFor="duration_minutes">
                                         Duration (minutes)
@@ -86,8 +86,8 @@ export default function Create() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="flex items-center gap-2">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div className="flex items-center gap-2 pt-2 sm:pt-0">
                                     <input
                                         type="hidden"
                                         name="is_main_service"
@@ -122,7 +122,10 @@ export default function Create() {
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <Button disabled={processing}>
+                                <Button
+                                    disabled={processing}
+                                    className="w-full sm:w-auto"
+                                >
                                     {processing
                                         ? 'Creating...'
                                         : 'Create Service'}

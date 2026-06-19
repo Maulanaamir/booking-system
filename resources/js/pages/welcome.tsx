@@ -1,5 +1,11 @@
 import { Head, Link } from '@inertiajs/react';
-import { ChevronDown, Clock, Home, MessageCircle, ShieldCheck } from 'lucide-react';
+import {
+    ChevronDown,
+    Clock,
+    Home,
+    MessageCircle,
+    ShieldCheck,
+} from 'lucide-react';
 import { useState } from 'react';
 import { show as bookingShow } from '@/routes/booking';
 
@@ -36,7 +42,8 @@ const T = {
         tagline: 'Kunjungan Ramah Perempuan',
         heroSub: 'Untuk perempuan & pasangan',
         heroTitle: 'Badan terasa lelah setelah seharian beraktivitas?',
-        heroDesc: 'Pesan sesi terapi panggilan yang nyaman di rumah. Cocok untuk Anda yang ingin merawat tubuh tanpa harus keluar lagi.',
+        heroDesc:
+            'Pesan sesi terapi panggilan yang nyaman di rumah. Cocok untuk Anda yang ingin merawat tubuh tanpa harus keluar lagi.',
         heroCta: 'Pesan Sekarang',
         book: 'Pesan',
         home: 'Beranda',
@@ -44,23 +51,44 @@ const T = {
         safetyFirstTitle: 'Kenyamanan Anda utama',
         safetyFirstSub: 'Ditangani dengan hati-hati',
         ourOfferings: 'Pilih Layanan Terapi',
-        offeringsSub: 'Pilih layanan yang sesuai dengan kebutuhan tubuh Anda, langsung dari rumah.',
+        offeringsSub:
+            'Pilih layanan yang sesuai dengan kebutuhan tubuh Anda, langsung dari rumah.',
         howItWorks: 'Cara Pemesanan',
         howItWorksSteps: [
-            { step: 1, title: 'Pilih Layanan', desc: 'Pilih layanan terapi yang Anda butuhkan.' },
-            { step: 2, title: 'Tentukan Jadwal', desc: 'Pilih tanggal dan jam yang paling nyaman.' },
-            { step: 3, title: 'Isi Alamat', desc: 'Masukkan alamat rumah untuk kunjungan terapis.' },
-            { step: 4, title: 'Tunggu Konfirmasi', desc: 'Tim kami akan menghubungi Anda melalui WhatsApp.' },
+            {
+                step: 1,
+                title: 'Pilih Layanan',
+                desc: 'Pilih layanan terapi yang Anda butuhkan.',
+            },
+            {
+                step: 2,
+                title: 'Tentukan Jadwal',
+                desc: 'Pilih tanggal dan jam yang paling nyaman.',
+            },
+            {
+                step: 3,
+                title: 'Isi Alamat',
+                desc: 'Masukkan alamat rumah untuk kunjungan terapis.',
+            },
+            {
+                step: 4,
+                title: 'Tunggu Konfirmasi',
+                desc: 'Tim kami akan menghubungi Anda melalui WhatsApp.',
+            },
         ],
         trustSafetyTitle: 'Privasi alamat terjaga',
-        trustSafetyDesc: 'Alamat Anda hanya digunakan untuk keperluan janji temu.',
+        trustSafetyDesc:
+            'Alamat Anda hanya digunakan untuk keperluan janji temu.',
         trustDoorstepTitle: 'Terapis datang ke rumah',
         trustDoorstepDesc: 'Tidak perlu pergi ke klinik atau tempat terapi.',
         trustFlexibleTitle: 'Konfirmasi jelas',
-        trustFlexibleDesc: 'Tim kami akan menghubungi Anda untuk memastikan jadwal.',
+        trustFlexibleDesc:
+            'Tim kami akan menghubungi Anda untuk memastikan jadwal.',
         trustWhatsappTitle: 'Nyaman untuk perempuan',
-        trustWhatsappDesc: 'Layanan dibuat agar terasa aman, sopan, dan nyaman.',
-        footerDesc: 'Layanan terapi panggilan yang nyaman, aman, dan terpercaya di rumah Anda.',
+        trustWhatsappDesc:
+            'Layanan dibuat agar terasa aman, sopan, dan nyaman.',
+        footerDesc:
+            'Layanan terapi panggilan yang nyaman, aman, dan terpercaya di rumah Anda.',
         explore: 'Jelajahi',
         bookSession: 'Pesan Sesi',
         support: 'Dukungan',
@@ -70,7 +98,8 @@ const T = {
         tagline: 'Women-Friendly Visits',
         heroSub: 'For women & couples',
         heroTitle: 'Tired after a long day?',
-        heroDesc: 'Book a comfortable home therapy session without going out. Designed for women and couples who want safe, gentle care at home.',
+        heroDesc:
+            'Book a comfortable home therapy session without going out. Designed for women and couples who want safe, gentle care at home.',
         heroCta: 'Book Now',
         book: 'Book',
         home: 'Home',
@@ -78,13 +107,30 @@ const T = {
         safetyFirstTitle: 'Your safety first',
         safetyFirstSub: 'By our trusted team',
         ourOfferings: 'Select Therapy Services',
-        offeringsSub: 'Choose the service that fits your body\'s needs, directly at home.',
+        offeringsSub:
+            "Choose the service that fits your body's needs, directly at home.",
         howItWorks: 'How it works',
         howItWorksSteps: [
-            { step: 1, title: 'Choose Service', desc: 'Choose the therapy service that you need.' },
-            { step: 2, title: 'Pick Schedule', desc: 'Find a date and time that fits your day.' },
-            { step: 3, title: 'Enter Address', desc: 'Enter your home address for the therapist\'s visit.' },
-            { step: 4, title: 'Wait for Confirmation', desc: 'Our team will contact you via WhatsApp.' },
+            {
+                step: 1,
+                title: 'Choose Service',
+                desc: 'Choose the therapy service that you need.',
+            },
+            {
+                step: 2,
+                title: 'Pick Schedule',
+                desc: 'Find a date and time that fits your day.',
+            },
+            {
+                step: 3,
+                title: 'Enter Address',
+                desc: "Enter your home address for the therapist's visit.",
+            },
+            {
+                step: 4,
+                title: 'Wait for Confirmation',
+                desc: 'Our team will contact you via WhatsApp.',
+            },
         ],
         trustSafetyTitle: 'Address privacy',
         trustSafetyDesc: 'Your address is only used for your appointment.',
@@ -93,17 +139,21 @@ const T = {
         trustFlexibleTitle: 'Clear confirmation',
         trustFlexibleDesc: 'Our team will confirm your schedule via WhatsApp.',
         trustWhatsappTitle: 'Women-friendly comfort',
-        trustWhatsappDesc: 'Designed to feel safe, respectful, and comfortable.',
-        footerDesc: 'Comfortable, safe, and trusted home care therapy service at your home.',
+        trustWhatsappDesc:
+            'Designed to feel safe, respectful, and comfortable.',
+        footerDesc:
+            'Comfortable, safe, and trusted home care therapy service at your home.',
         explore: 'Explore',
         bookSession: 'Book a Session',
         support: 'Support',
         backToTop: 'Back to Top',
-    }
+    },
 };
 
-const HERO_GRADIENT = 'linear-gradient(160deg, #EFE6E2 0%, #F5ECE7 40%, #FFDAD9 80%, #F1B8B8 100%)';
-const CARD_GRADIENT = 'linear-gradient(160deg, #EFE6E2 0%, #F5ECE7 60%, #FFDAD9 100%)';
+const HERO_GRADIENT =
+    'linear-gradient(160deg, #EFE6E2 0%, #F5ECE7 40%, #FFDAD9 80%, #F1B8B8 100%)';
+const CARD_GRADIENT =
+    'linear-gradient(160deg, #EFE6E2 0%, #F5ECE7 60%, #FFDAD9 100%)';
 
 const LANG_OPTIONS = [
     { value: 'id', flag: '🇮🇩', short: 'ID', label: 'Indonesia' },
@@ -123,7 +173,8 @@ function LanguageDropdown({
     setIsLangOpen: (open: boolean) => void;
     compact?: boolean;
 }) {
-    const currentOption = LANG_OPTIONS.find((opt) => opt.value === lang) || LANG_OPTIONS[0];
+    const currentOption =
+        LANG_OPTIONS.find((opt) => opt.value === lang) || LANG_OPTIONS[0];
 
     return (
         <div className="relative inline-block text-left">
@@ -133,21 +184,25 @@ function LanguageDropdown({
                 aria-label="Select language"
                 aria-expanded={isLangOpen}
                 aria-haspopup="menu"
-                className="flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold outline-none transition-all"
+                className="flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all outline-none"
                 style={{
                     borderColor: 'rgba(223,168,168,0.55)',
                     backgroundColor: 'rgba(255,248,241,0.85)',
                     color: 'var(--pub-text-sub)',
                 }}
                 onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(223,168,168,0.14)';
+                    e.currentTarget.style.backgroundColor =
+                        'rgba(223,168,168,0.14)';
                 }}
                 onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(255,248,241,0.85)';
+                    e.currentTarget.style.backgroundColor =
+                        'rgba(255,248,241,0.85)';
                 }}
             >
                 <span>{currentOption.flag}</span>
-                <span>{compact ? currentOption.short : currentOption.label}</span>
+                <span>
+                    {compact ? currentOption.short : currentOption.label}
+                </span>
                 <ChevronDown
                     className="size-3 transition-transform duration-250"
                     style={{
@@ -160,7 +215,7 @@ function LanguageDropdown({
             {isLangOpen && (
                 <div
                     role="menu"
-                    className="absolute right-0 top-full mt-2 rounded-2xl border shadow-lg overflow-hidden z-50 transition-all"
+                    className="absolute top-full right-0 z-50 mt-2 overflow-hidden rounded-2xl border shadow-lg transition-all"
                     style={{
                         minWidth: compact ? '118px' : '150px',
                         borderColor: 'var(--pub-border)',
@@ -184,17 +239,23 @@ function LanguageDropdown({
                                 className="flex w-full items-center gap-2 px-3 py-2 text-left transition-colors"
                                 style={{
                                     fontSize: compact ? '12px' : '14px',
-                                    backgroundColor: active ? 'rgba(223,168,168,0.18)' : 'transparent',
-                                    color: active ? 'var(--pub-rose)' : 'var(--pub-text)',
+                                    backgroundColor: active
+                                        ? 'rgba(223,168,168,0.18)'
+                                        : 'transparent',
+                                    color: active
+                                        ? 'var(--pub-rose)'
+                                        : 'var(--pub-text)',
                                 }}
                                 onMouseEnter={(e) => {
                                     if (!active) {
-                                        e.currentTarget.style.backgroundColor = 'rgba(223,168,168,0.12)';
+                                        e.currentTarget.style.backgroundColor =
+                                            'rgba(223,168,168,0.12)';
                                     }
                                 }}
                                 onMouseLeave={(e) => {
                                     if (!active) {
-                                        e.currentTarget.style.backgroundColor = 'transparent';
+                                        e.currentTarget.style.backgroundColor =
+                                            'transparent';
                                     }
                                 }}
                             >
@@ -228,27 +289,52 @@ export default function Welcome({ services }: { services: Service[] }) {
     };
 
     const TRUST_ITEMS = [
-        { icon: ShieldCheck, title: T[lang].trustSafetyTitle, desc: T[lang].trustSafetyDesc },
-        { icon: Home, title: T[lang].trustDoorstepTitle, desc: T[lang].trustDoorstepDesc },
-        { icon: Clock, title: T[lang].trustFlexibleTitle, desc: T[lang].trustFlexibleDesc },
-        { icon: MessageCircle, title: T[lang].trustWhatsappTitle, desc: T[lang].trustWhatsappDesc },
+        {
+            icon: ShieldCheck,
+            title: T[lang].trustSafetyTitle,
+            desc: T[lang].trustSafetyDesc,
+        },
+        {
+            icon: Home,
+            title: T[lang].trustDoorstepTitle,
+            desc: T[lang].trustDoorstepDesc,
+        },
+        {
+            icon: Clock,
+            title: T[lang].trustFlexibleTitle,
+            desc: T[lang].trustFlexibleDesc,
+        },
+        {
+            icon: MessageCircle,
+            title: T[lang].trustWhatsappTitle,
+            desc: T[lang].trustWhatsappDesc,
+        },
     ];
 
     return (
         <>
             <Head>
-                <title>{lang === 'id' ? 'Home Care Therapy — Terapi Panggilan Profesional di Rumah' : 'Home Care Therapy — Professional Home Visit Therapy'}</title>
-                <meta
-                    name="description"
-                    content={T[lang].heroDesc}
-                />
+                <title>
+                    {lang === 'id'
+                        ? 'Home Care Therapy — Terapi Panggilan Profesional di Rumah'
+                        : 'Home Care Therapy — Professional Home Visit Therapy'}
+                </title>
+                <meta name="description" content={T[lang].heroDesc} />
             </Head>
 
-            <div id="top" className="public-page relative min-h-screen overflow-x-hidden pb-20 md:pb-0">
-
+            <div
+                id="top"
+                className="public-page relative min-h-screen overflow-x-hidden pb-20 md:pb-0"
+            >
                 {/* Ambient blobs */}
-                <div aria-hidden className="pub-blob pub-blob-rose fixed -right-24 -top-24 h-[500px] w-[500px]" />
-                <div aria-hidden className="pub-blob pub-blob-lavender fixed -left-28 top-[42%] h-[380px] w-[380px]" />
+                <div
+                    aria-hidden
+                    className="pub-blob pub-blob-rose fixed -top-24 -right-24 h-[500px] w-[500px]"
+                />
+                <div
+                    aria-hidden
+                    className="pub-blob pub-blob-lavender fixed top-[42%] -left-28 h-[380px] w-[380px]"
+                />
 
                 {/* ── Header ──────────────────────────────────────────── */}
                 <header
@@ -262,7 +348,10 @@ export default function Welcome({ services }: { services: Service[] }) {
                 >
                     <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 md:px-10">
                         {/* Brand */}
-                        <Link href="/" className="flex min-w-0 items-center gap-2.5">
+                        <Link
+                            href="/"
+                            className="flex min-w-0 items-center gap-2.5"
+                        >
                             <span
                                 className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs"
                                 style={{
@@ -313,7 +402,12 @@ export default function Welcome({ services }: { services: Service[] }) {
                             </nav>
 
                             {/* Desktop language selector */}
-                            <LanguageDropdown lang={lang} changeLang={changeLang} isLangOpen={isLangOpen} setIsLangOpen={setIsLangOpen} />
+                            <LanguageDropdown
+                                lang={lang}
+                                changeLang={changeLang}
+                                isLangOpen={isLangOpen}
+                                setIsLangOpen={setIsLangOpen}
+                            />
 
                             <Link
                                 href={bookingShow()}
@@ -326,12 +420,17 @@ export default function Welcome({ services }: { services: Service[] }) {
 
                         {/* Mobile language selector only */}
                         <div className="md:hidden">
-                            <LanguageDropdown lang={lang} changeLang={changeLang} isLangOpen={isLangOpen} setIsLangOpen={setIsLangOpen} compact />
+                            <LanguageDropdown
+                                lang={lang}
+                                changeLang={changeLang}
+                                isLangOpen={isLangOpen}
+                                setIsLangOpen={setIsLangOpen}
+                                compact
+                            />
                         </div>
                     </div>
                 </header>
                 <main>
-
                     {/* ══ DESKTOP HERO ═══════════════════════════════════════ */}
                     <section className="mx-auto hidden max-w-[1200px] items-center justify-between gap-12 px-10 py-20 md:flex">
                         {/* Left: text */}
@@ -344,20 +443,28 @@ export default function Welcome({ services }: { services: Service[] }) {
                                     letterSpacing: '0.05em',
                                 }}
                             >
-                                <span style={{ color: 'var(--pub-sage)' }}>✦</span>
+                                <span style={{ color: 'var(--pub-sage)' }}>
+                                    ✦
+                                </span>
                                 {T[lang].heroSub}
                             </div>
 
                             <h1
-                                className="pub-heading text-5xl font-semibold leading-tight"
-                                style={{ color: 'var(--pub-text)', letterSpacing: '-0.02em' }}
+                                className="pub-heading text-5xl leading-tight font-semibold"
+                                style={{
+                                    color: 'var(--pub-text)',
+                                    letterSpacing: '-0.02em',
+                                }}
                             >
                                 {T[lang].heroTitle}
                             </h1>
 
                             <p
                                 className="max-w-md text-lg leading-relaxed"
-                                style={{ color: 'var(--pub-text-sub)', lineHeight: '1.6' }}
+                                style={{
+                                    color: 'var(--pub-text-sub)',
+                                    lineHeight: '1.6',
+                                }}
                             >
                                 {T[lang].heroDesc}
                             </p>
@@ -378,7 +485,8 @@ export default function Welcome({ services }: { services: Service[] }) {
                                 style={{
                                     background: HERO_GRADIENT,
                                     aspectRatio: '4/3',
-                                    boxShadow: '0 10px 40px -10px rgba(114,70,180,0.1)',
+                                    boxShadow:
+                                        '0 10px 40px -10px rgba(114,70,180,0.1)',
                                 }}
                             >
                                 <img
@@ -392,22 +500,32 @@ export default function Welcome({ services }: { services: Service[] }) {
                                 <div
                                     aria-hidden
                                     style={{
-                                        position: 'absolute', top: '-20%', right: '-10%',
-                                        width: '300px', height: '300px',
-                                        background: '#DFA8A8', opacity: 0.12,
-                                        filter: 'blur(40px)', borderRadius: '50%',
+                                        position: 'absolute',
+                                        top: '-20%',
+                                        right: '-10%',
+                                        width: '300px',
+                                        height: '300px',
+                                        background: '#DFA8A8',
+                                        opacity: 0.12,
+                                        filter: 'blur(40px)',
+                                        borderRadius: '50%',
                                     }}
                                 />
                                 <div
                                     aria-hidden
                                     style={{
-                                        position: 'absolute', bottom: '-10%', left: '-10%',
-                                        width: '240px', height: '240px',
-                                        background: '#ECDCFF', opacity: 0.3,
-                                        filter: 'blur(35px)', borderRadius: '50%',
+                                        position: 'absolute',
+                                        bottom: '-10%',
+                                        left: '-10%',
+                                        width: '240px',
+                                        height: '240px',
+                                        background: '#ECDCFF',
+                                        opacity: 0.3,
+                                        filter: 'blur(35px)',
+                                        borderRadius: '50%',
                                     }}
                                 />
-                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                                     <span
                                         className="pub-heading text-2xl italic opacity-20"
                                         style={{ color: 'var(--pub-rose)' }}
@@ -421,25 +539,47 @@ export default function Welcome({ services }: { services: Service[] }) {
                             <div className="pub-card-solid absolute -bottom-5 -left-5 flex items-center gap-3 rounded-xl px-4 py-3">
                                 <div
                                     className="flex size-11 shrink-0 items-center justify-center rounded-full"
-                                    style={{ backgroundColor: 'var(--pub-cta-fixed)' }}
+                                    style={{
+                                        backgroundColor: 'var(--pub-cta-fixed)',
+                                    }}
                                 >
-                                    <span style={{ fontSize: '20px', color: 'var(--pub-lavender)' }}>♡</span>
+                                    <span
+                                        style={{
+                                            fontSize: '20px',
+                                            color: 'var(--pub-lavender)',
+                                        }}
+                                    >
+                                        ♡
+                                    </span>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-semibold" style={{ color: 'var(--pub-text)' }}>{T[lang].safetyFirstTitle}</p>
-                                    <p className="text-xs" style={{ color: 'var(--pub-text-muted)' }}>{T[lang].safetyFirstSub}</p>
+                                    <p
+                                        className="text-sm font-semibold"
+                                        style={{ color: 'var(--pub-text)' }}
+                                    >
+                                        {T[lang].safetyFirstTitle}
+                                    </p>
+                                    <p
+                                        className="text-xs"
+                                        style={{
+                                            color: 'var(--pub-text-muted)',
+                                        }}
+                                    >
+                                        {T[lang].safetyFirstSub}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </section>
 
                     {/* ══ MOBILE HERO ════════════════════════════════════════ */}
-                    <section className="relative px-5 pb-16 pt-6 md:hidden">
+                    <section className="relative px-5 pt-6 pb-16 md:hidden">
                         <div
                             className="relative h-[400px] w-full overflow-hidden rounded-3xl"
                             style={{
                                 background: HERO_GRADIENT,
-                                boxShadow: '0 10px 30px -8px rgba(114,70,180,0.1)',
+                                boxShadow:
+                                    '0 10px 30px -8px rgba(114,70,180,0.1)',
                             }}
                         >
                             <img
@@ -453,16 +593,22 @@ export default function Welcome({ services }: { services: Service[] }) {
                             <div
                                 aria-hidden
                                 style={{
-                                    position: 'absolute', top: '-15%', right: '-15%',
-                                    width: '250px', height: '250px',
-                                    background: '#DFA8A8', opacity: 0.15,
-                                    filter: 'blur(35px)', borderRadius: '50%',
+                                    position: 'absolute',
+                                    top: '-15%',
+                                    right: '-15%',
+                                    width: '250px',
+                                    height: '250px',
+                                    background: '#DFA8A8',
+                                    opacity: 0.15,
+                                    filter: 'blur(35px)',
+                                    borderRadius: '50%',
                                 }}
                             />
                             <div
                                 className="absolute inset-0"
                                 style={{
-                                    background: 'linear-gradient(to top, rgba(255,248,241,0.92) 0%, rgba(255,248,241,0.45) 50%, transparent 100%)',
+                                    background:
+                                        'linear-gradient(to top, rgba(255,248,241,0.92) 0%, rgba(255,248,241,0.45) 50%, transparent 100%)',
                                 }}
                             />
                             <div className="absolute bottom-0 left-0 flex w-full flex-col items-center p-6 pb-8 text-center">
@@ -481,7 +627,9 @@ export default function Welcome({ services }: { services: Service[] }) {
                                 <Link
                                     href={bookingShow()}
                                     className="w-full max-w-[240px] rounded-full py-4 text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-1"
-                                    style={{ backgroundColor: 'var(--pub-cta)' }}
+                                    style={{
+                                        backgroundColor: 'var(--pub-cta)',
+                                    }}
                                 >
                                     {T[lang].heroCta}
                                 </Link>
@@ -499,12 +647,27 @@ export default function Welcome({ services }: { services: Service[] }) {
                     >
                         <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-8 px-5 sm:grid-cols-2 md:grid-cols-4 md:px-10">
                             {TRUST_ITEMS.map(({ icon: Icon, title, desc }) => (
-                                <div key={title} className="flex flex-col items-center gap-3 text-center">
-                                    <Icon className="size-8" style={{ color: 'var(--pub-sage)' }} />
-                                    <h3 className="text-base font-semibold" style={{ color: 'var(--pub-text)', lineHeight: '1.5' }}>
+                                <div
+                                    key={title}
+                                    className="flex flex-col items-center gap-3 text-center"
+                                >
+                                    <Icon
+                                        className="size-8"
+                                        style={{ color: 'var(--pub-sage)' }}
+                                    />
+                                    <h3
+                                        className="text-base font-semibold"
+                                        style={{
+                                            color: 'var(--pub-text)',
+                                            lineHeight: '1.5',
+                                        }}
+                                    >
                                         {title}
                                     </h3>
-                                    <p className="text-sm leading-relaxed" style={{ color: 'var(--pub-text-sub)' }}>
+                                    <p
+                                        className="text-sm leading-relaxed"
+                                        style={{ color: 'var(--pub-text-sub)' }}
+                                    >
                                         {desc}
                                     </p>
                                 </div>
@@ -525,7 +688,10 @@ export default function Welcome({ services }: { services: Service[] }) {
                                     </h2>
                                     <p
                                         className="mx-auto max-w-2xl text-lg leading-relaxed"
-                                        style={{ color: 'var(--pub-text-sub)', lineHeight: '1.6' }}
+                                        style={{
+                                            color: 'var(--pub-text-sub)',
+                                            lineHeight: '1.6',
+                                        }}
                                     >
                                         {T[lang].offeringsSub}
                                     </p>
@@ -533,7 +699,8 @@ export default function Welcome({ services }: { services: Service[] }) {
 
                                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                                     {services.map((service, index) => {
-                                        const serviceImg = getServiceImage(index);
+                                        const serviceImg =
+                                            getServiceImage(index);
 
                                         return (
                                             <div
@@ -543,7 +710,10 @@ export default function Welcome({ services }: { services: Service[] }) {
                                                 {/* h-48 image area */}
                                                 <div
                                                     className="relative h-48 w-full overflow-hidden"
-                                                    style={{ background: CARD_GRADIENT }}
+                                                    style={{
+                                                        background:
+                                                            CARD_GRADIENT,
+                                                    }}
                                                 >
                                                     {serviceImg && (
                                                         <img
@@ -551,17 +721,25 @@ export default function Welcome({ services }: { services: Service[] }) {
                                                             alt={service.name}
                                                             className="h-full w-full object-cover"
                                                             onError={(e) => {
-                                                                e.currentTarget.style.display = 'none';
+                                                                e.currentTarget.style.display =
+                                                                    'none';
                                                             }}
                                                         />
                                                     )}
                                                     <div
                                                         aria-hidden
                                                         style={{
-                                                            position: 'absolute', top: '-20%', right: '-10%',
-                                                            width: '180px', height: '180px',
-                                                            background: '#DFA8A8', opacity: 0.13,
-                                                            filter: 'blur(30px)', borderRadius: '50%',
+                                                            position:
+                                                                'absolute',
+                                                            top: '-20%',
+                                                            right: '-10%',
+                                                            width: '180px',
+                                                            height: '180px',
+                                                            background:
+                                                                '#DFA8A8',
+                                                            opacity: 0.13,
+                                                            filter: 'blur(30px)',
+                                                            borderRadius: '50%',
                                                         }}
                                                     />
                                                 </div>
@@ -571,32 +749,54 @@ export default function Welcome({ services }: { services: Service[] }) {
                                                     <div className="mb-4 flex items-start justify-between gap-3">
                                                         <h3
                                                             className="pub-heading text-2xl leading-snug"
-                                                            style={{ color: 'var(--pub-text)', fontWeight: 500, lineHeight: '1.3' }}
+                                                            style={{
+                                                                color: 'var(--pub-text)',
+                                                                fontWeight: 500,
+                                                                lineHeight:
+                                                                    '1.3',
+                                                            }}
                                                         >
                                                             {service.name}
                                                         </h3>
                                                         <span
                                                             className="shrink-0 rounded-full px-3 py-1 text-xs font-semibold"
                                                             style={{
-                                                                backgroundColor: 'rgba(241,184,184,0.2)',
+                                                                backgroundColor:
+                                                                    'rgba(241,184,184,0.2)',
                                                                 color: 'var(--pub-text-sub)',
                                                             }}
                                                         >
-                                                            {service.duration_minutes} Min
+                                                            {
+                                                                service.duration_minutes
+                                                            }{' '}
+                                                            Min
                                                         </span>
                                                     </div>
 
                                                     {service.description && (
                                                         <p
                                                             className="mb-6 flex-grow text-sm leading-relaxed"
-                                                            style={{ color: 'var(--pub-text-sub)', lineHeight: '1.6' }}
+                                                            style={{
+                                                                color: 'var(--pub-text-sub)',
+                                                                lineHeight:
+                                                                    '1.6',
+                                                            }}
                                                         >
-                                                            {service.description}
+                                                            {
+                                                                service.description
+                                                            }
                                                         </p>
                                                     )}
 
-                                                    <p className="mb-4 text-base font-semibold" style={{ color: 'var(--pub-lavender)' }}>
-                                                        {formatPrice(service.price)}
+                                                    <p
+                                                        className="mb-4 text-base font-semibold"
+                                                        style={{
+                                                            color: 'var(--pub-lavender)',
+                                                        }}
+                                                    >
+                                                        {formatPrice(
+                                                            service.price,
+                                                        )}
                                                     </p>
 
                                                     {/* Outlined button */}
@@ -631,49 +831,92 @@ export default function Welcome({ services }: { services: Service[] }) {
 
                             {/* Desktop: 4 columns */}
                             <div className="hidden gap-6 md:grid md:grid-cols-4">
-                                {T[lang].howItWorksSteps.map(({ step, title, desc }) => (
-                                    <div key={step} className="flex flex-col items-center gap-3 text-center">
-                                        <span
-                                            className="pub-heading flex size-12 items-center justify-center rounded-full text-xl font-bold"
-                                            style={{ backgroundColor: 'var(--pub-rose-fixed)', color: 'var(--pub-rose)' }}
+                                {T[lang].howItWorksSteps.map(
+                                    ({ step, title, desc }) => (
+                                        <div
+                                            key={step}
+                                            className="flex flex-col items-center gap-3 text-center"
                                         >
-                                            {step}
-                                        </span>
-                                        <h4 className="text-base font-semibold" style={{ color: 'var(--pub-text)', lineHeight: '1.5' }}>
-                                            {title}
-                                        </h4>
-                                        <p className="text-sm leading-relaxed" style={{ color: 'var(--pub-text-sub)' }}>
-                                            {desc}
-                                        </p>
-                                    </div>
-                                ))}
+                                            <span
+                                                className="pub-heading flex size-12 items-center justify-center rounded-full text-xl font-bold"
+                                                style={{
+                                                    backgroundColor:
+                                                        'var(--pub-rose-fixed)',
+                                                    color: 'var(--pub-rose)',
+                                                }}
+                                            >
+                                                {step}
+                                            </span>
+                                            <h4
+                                                className="text-base font-semibold"
+                                                style={{
+                                                    color: 'var(--pub-text)',
+                                                    lineHeight: '1.5',
+                                                }}
+                                            >
+                                                {title}
+                                            </h4>
+                                            <p
+                                                className="text-sm leading-relaxed"
+                                                style={{
+                                                    color: 'var(--pub-text-sub)',
+                                                }}
+                                            >
+                                                {desc}
+                                            </p>
+                                        </div>
+                                    ),
+                                )}
                             </div>
 
                             {/* Mobile: vertical timeline */}
                             <div className="relative flex flex-col gap-6 md:hidden">
                                 <div
                                     aria-hidden
-                                    className="absolute bottom-8 left-6 top-8 w-px"
-                                    style={{ backgroundColor: 'var(--pub-border)', opacity: 0.5 }}
+                                    className="absolute top-8 bottom-8 left-6 w-px"
+                                    style={{
+                                        backgroundColor: 'var(--pub-border)',
+                                        opacity: 0.5,
+                                    }}
                                 />
-                                {T[lang].howItWorksSteps.map(({ step, title, desc }) => (
-                                    <div key={step} className="relative z-10 flex items-start gap-5">
-                                        <span
-                                            className="pub-heading flex size-12 shrink-0 items-center justify-center rounded-full text-xl font-bold"
-                                            style={{ backgroundColor: 'var(--pub-rose-fixed)', color: 'var(--pub-rose)' }}
+                                {T[lang].howItWorksSteps.map(
+                                    ({ step, title, desc }) => (
+                                        <div
+                                            key={step}
+                                            className="relative z-10 flex items-start gap-5"
                                         >
-                                            {step}
-                                        </span>
-                                        <div className="pt-2">
-                                            <h4 className="font-semibold" style={{ color: 'var(--pub-text)', lineHeight: '1.5' }}>
-                                                {title}
-                                            </h4>
-                                            <p className="mt-1 text-sm leading-relaxed" style={{ color: 'var(--pub-text-sub)' }}>
-                                                {desc}
-                                            </p>
+                                            <span
+                                                className="pub-heading flex size-12 shrink-0 items-center justify-center rounded-full text-xl font-bold"
+                                                style={{
+                                                    backgroundColor:
+                                                        'var(--pub-rose-fixed)',
+                                                    color: 'var(--pub-rose)',
+                                                }}
+                                            >
+                                                {step}
+                                            </span>
+                                            <div className="pt-2">
+                                                <h4
+                                                    className="font-semibold"
+                                                    style={{
+                                                        color: 'var(--pub-text)',
+                                                        lineHeight: '1.5',
+                                                    }}
+                                                >
+                                                    {title}
+                                                </h4>
+                                                <p
+                                                    className="mt-1 text-sm leading-relaxed"
+                                                    style={{
+                                                        color: 'var(--pub-text-sub)',
+                                                    }}
+                                                >
+                                                    {desc}
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ),
+                                )}
                             </div>
                         </div>
                     </section>
@@ -704,15 +947,22 @@ export default function Welcome({ services }: { services: Service[] }) {
                             >
                                 Home Care Therapy
                             </span>
-                            <p className="text-sm leading-relaxed" style={{ color: 'var(--pub-text-sub)', opacity: 0.8 }}>
-                                © {currentYear} Home Care Therapy Service. {T[lang].footerDesc}
+                            <p
+                                className="text-sm leading-relaxed"
+                                style={{
+                                    color: 'var(--pub-text-sub)',
+                                    opacity: 0.8,
+                                }}
+                            >
+                                © {currentYear} Home Care Therapy Service.{' '}
+                                {T[lang].footerDesc}
                             </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-8">
                             <div className="flex flex-col gap-3">
                                 <h4
-                                    className="mb-2 text-sm font-bold uppercase tracking-wider"
+                                    className="mb-2 text-sm font-bold tracking-wider uppercase"
                                     style={{ color: 'var(--pub-rose)' }}
                                 >
                                     {T[lang].explore}
@@ -734,7 +984,7 @@ export default function Welcome({ services }: { services: Service[] }) {
                             </div>
                             <div className="flex flex-col gap-3">
                                 <h4
-                                    className="mb-2 text-sm font-bold uppercase tracking-wider"
+                                    className="mb-2 text-sm font-bold tracking-wider uppercase"
                                     style={{ color: 'var(--pub-rose)' }}
                                 >
                                     {T[lang].support}
@@ -742,7 +992,11 @@ export default function Welcome({ services }: { services: Service[] }) {
                                 <a
                                     href="#"
                                     onClick={(e) => {
-                                        e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        e.preventDefault();
+                                        window.scrollTo({
+                                            top: 0,
+                                            behavior: 'smooth',
+                                        });
                                     }}
                                     className="text-sm transition-all hover:opacity-70"
                                     style={{ color: 'var(--pub-text-sub)' }}
@@ -753,7 +1007,8 @@ export default function Welcome({ services }: { services: Service[] }) {
                         </div>
                     </div>
                     {/* Mobile sticky booking CTA */}
-                    <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-white/80 px-5 py-3 backdrop-blur-md md:hidden"
+                    <div
+                        className="fixed inset-x-0 bottom-0 z-50 border-t bg-white/80 px-5 py-3 backdrop-blur-md md:hidden"
                         style={{ borderColor: 'rgba(204,195,212,0.45)' }}
                     >
                         <Link

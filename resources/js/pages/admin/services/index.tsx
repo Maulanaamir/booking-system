@@ -16,7 +16,9 @@ import type { BreadcrumbItem } from '@/types';
 type Service = {
     id: number;
     name: string;
+    name_en?: string | null;
     description: string | null;
+    description_en?: string | null;
     duration_minutes: number;
     price: number;
     is_main_service: boolean;

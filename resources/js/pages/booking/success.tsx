@@ -9,6 +9,7 @@ import {
     ReceiptText,
 } from 'lucide-react';
 import { useState } from 'react';
+import { TSuccess as T } from '@/lib/public-translations';
 import { show as bookingShow } from '@/routes/booking';
 
 type AppointmentSummary = {
@@ -47,64 +48,6 @@ function formatTime(dateStr: string, lang: 'id' | 'en'): string {
         },
     );
 }
-
-const T = {
-    id: {
-        title: 'Pemesanan Diterima — Home Care Therapy',
-        receivedTag: 'Pemesanan Diterima',
-        allSetTitle: 'Semua Sudah Siap',
-        successDesc:
-            'Permintaan pemesanan terapi di rumah Anda telah kami terima. Kami akan menghubungi Anda segera melalui WhatsApp untuk mengonfirmasi sesi dan metode pembayaran DP.',
-        reference: 'Nomor Referensi',
-        schedule: 'Jadwal Sesi',
-        endsApprox: (timeStr: string) => `Selesai sekitar jam ${timeStr}`,
-        paymentDetails: 'Rincian Pembayaran',
-        total: 'Total Biaya',
-        dpToConfirm: 'DP untuk Konfirmasi',
-        remaining: 'Sisa Pembayaran',
-        safetyNotice:
-            'Alamat Anda hanya digunakan untuk janji temu ini. Keamanan dan kenyamanan Anda adalah prioritas kami.',
-        nextStepsTitle: 'Langkah Selanjutnya: Pembayaran DP',
-        nextStepsDesc: (priceStr: string) =>
-            `Silakan selesaikan pembayaran DP sebesar ${priceStr} untuk mengamankan slot jadwal Anda. Anda dapat membayar menggunakan tombol di bawah ini.`,
-        bookAnother: 'Pesan Sesi Lainnya',
-        backToHome: 'Kembali ke Beranda',
-        payDpNow: 'Bayar DP Sekarang',
-        paymentStatusLabel: 'Status Pembayaran',
-        unpaidStatus: 'Belum Dibayar',
-        paidStatus: 'Sudah Dibayar',
-        fallbackMessage:
-            'Link pembayaran otomatis belum tersedia. Silakan hubungi admin untuk konfirmasi pembayaran DP.',
-    },
-    en: {
-        title: 'Booking Received — Home Care Therapy',
-        receivedTag: 'Booking received',
-        allSetTitle: "You're all set",
-        successDesc:
-            "Your booking request has been received. We'll contact you via WhatsApp to confirm your session and DP payment.",
-        reference: 'Reference',
-        schedule: 'Schedule',
-        endsApprox: (timeStr: string) => `Ends approx. ${timeStr}`,
-        paymentDetails: 'Payment details',
-        total: 'Total',
-        dpToConfirm: 'DP to confirm',
-        remaining: 'Remaining',
-        safetyNotice:
-            'Your address is used only for this appointment. Your comfort and safety come first.',
-        nextStepsTitle: 'Next: Complete DP Payment',
-        nextStepsDesc: (priceStr: string) =>
-            `Please complete the DP payment of ${priceStr} to secure your slot. You can pay using the button below.`,
-        bookAnother: 'Book Another Session',
-        backToHome: 'Back to Home',
-        payDpNow: 'Pay DP Now',
-        paymentStatusLabel: 'Payment Status',
-        unpaidStatus: 'Unpaid',
-        paidStatus: 'Paid',
-        fallbackMessage:
-            'Automatic payment link is not available yet. Please contact admin to confirm your DP payment.',
-    },
-};
-
 export default function Success({
     appointment,
 }: {

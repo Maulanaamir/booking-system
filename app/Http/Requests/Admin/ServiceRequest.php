@@ -16,7 +16,9 @@ class ServiceRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'name_en' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'description_en' => ['nullable', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
             'price' => ['required', 'integer', 'min:0'],
             'is_main_service' => ['required', 'boolean'],

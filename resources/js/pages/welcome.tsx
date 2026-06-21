@@ -7,12 +7,15 @@ import {
     ShieldCheck,
 } from 'lucide-react';
 import { useState } from 'react';
+import { TWelcome as T } from '@/lib/public-translations';
 import { show as bookingShow } from '@/routes/booking';
 
 type Service = {
     id: number;
     name: string;
+    name_en?: string | null;
     description: string | null;
+    description_en?: string | null;
     duration_minutes: number;
     price: number;
 };
@@ -36,120 +39,6 @@ function getServiceImage(index: number): string | null {
 
     return null;
 }
-
-const T = {
-    id: {
-        tagline: 'Kunjungan Ramah Perempuan',
-        heroSub: 'Untuk perempuan & pasangan',
-        heroTitle: 'Badan terasa lelah setelah seharian beraktivitas?',
-        heroDesc:
-            'Pesan sesi terapi panggilan yang nyaman di rumah. Cocok untuk Anda yang ingin merawat tubuh tanpa harus keluar lagi.',
-        heroCta: 'Pesan Sekarang',
-        book: 'Pesan',
-        home: 'Beranda',
-        cozyWellnessSetting: 'Suasana yang tenang dan nyaman',
-        safetyFirstTitle: 'Kenyamanan Anda utama',
-        safetyFirstSub: 'Ditangani dengan hati-hati',
-        ourOfferings: 'Pilih Layanan Terapi',
-        offeringsSub:
-            'Pilih layanan yang sesuai dengan kebutuhan tubuh Anda, langsung dari rumah.',
-        howItWorks: 'Cara Pemesanan',
-        howItWorksSteps: [
-            {
-                step: 1,
-                title: 'Pilih Layanan',
-                desc: 'Pilih layanan terapi yang Anda butuhkan.',
-            },
-            {
-                step: 2,
-                title: 'Tentukan Jadwal',
-                desc: 'Pilih tanggal dan jam yang paling nyaman.',
-            },
-            {
-                step: 3,
-                title: 'Isi Alamat',
-                desc: 'Masukkan alamat rumah untuk kunjungan terapis.',
-            },
-            {
-                step: 4,
-                title: 'Tunggu Konfirmasi',
-                desc: 'Tim kami akan menghubungi Anda melalui WhatsApp.',
-            },
-        ],
-        trustSafetyTitle: 'Privasi alamat terjaga',
-        trustSafetyDesc:
-            'Alamat Anda hanya digunakan untuk keperluan janji temu.',
-        trustDoorstepTitle: 'Terapis datang ke rumah',
-        trustDoorstepDesc: 'Tidak perlu pergi ke klinik atau tempat terapi.',
-        trustFlexibleTitle: 'Konfirmasi jelas',
-        trustFlexibleDesc:
-            'Tim kami akan menghubungi Anda untuk memastikan jadwal.',
-        trustWhatsappTitle: 'Nyaman untuk perempuan',
-        trustWhatsappDesc:
-            'Layanan dibuat agar terasa aman, sopan, dan nyaman.',
-        footerDesc:
-            'Layanan terapi panggilan yang nyaman, aman, dan terpercaya di rumah Anda.',
-        explore: 'Jelajahi',
-        bookSession: 'Pesan Sesi',
-        support: 'Dukungan',
-        backToTop: 'Kembali ke Atas',
-    },
-    en: {
-        tagline: 'Women-Friendly Visits',
-        heroSub: 'For women & couples',
-        heroTitle: 'Tired after a long day?',
-        heroDesc:
-            'Book a comfortable home therapy session without going out. Designed for women and couples who want safe, gentle care at home.',
-        heroCta: 'Book Now',
-        book: 'Book',
-        home: 'Home',
-        cozyWellnessSetting: 'Cozy wellness setting',
-        safetyFirstTitle: 'Your safety first',
-        safetyFirstSub: 'By our trusted team',
-        ourOfferings: 'Select Therapy Services',
-        offeringsSub:
-            "Choose the service that fits your body's needs, directly at home.",
-        howItWorks: 'How it works',
-        howItWorksSteps: [
-            {
-                step: 1,
-                title: 'Choose Service',
-                desc: 'Choose the therapy service that you need.',
-            },
-            {
-                step: 2,
-                title: 'Pick Schedule',
-                desc: 'Find a date and time that fits your day.',
-            },
-            {
-                step: 3,
-                title: 'Enter Address',
-                desc: "Enter your home address for the therapist's visit.",
-            },
-            {
-                step: 4,
-                title: 'Wait for Confirmation',
-                desc: 'Our team will contact you via WhatsApp.',
-            },
-        ],
-        trustSafetyTitle: 'Address privacy',
-        trustSafetyDesc: 'Your address is only used for your appointment.',
-        trustDoorstepTitle: 'At your doorstep',
-        trustDoorstepDesc: 'The therapist comes directly to your home.',
-        trustFlexibleTitle: 'Clear confirmation',
-        trustFlexibleDesc: 'Our team will confirm your schedule via WhatsApp.',
-        trustWhatsappTitle: 'Women-friendly comfort',
-        trustWhatsappDesc:
-            'Designed to feel safe, respectful, and comfortable.',
-        footerDesc:
-            'Comfortable, safe, and trusted home care therapy service at your home.',
-        explore: 'Explore',
-        bookSession: 'Book a Session',
-        support: 'Support',
-        backToTop: 'Back to Top',
-    },
-};
-
 const HERO_GRADIENT =
     'linear-gradient(160deg, #EFE6E2 0%, #F5ECE7 40%, #FFDAD9 80%, #F1B8B8 100%)';
 const CARD_GRADIENT =
@@ -701,6 +590,8 @@ export default function Welcome({ services }: { services: Service[] }) {
                                     {services.map((service, index) => {
                                         const serviceImg =
                                             getServiceImage(index);
+                                        const serviceName = lang === 'en' && service.name_en ? service.name_en : service.name;
+                                        const serviceDesc = lang === 'en' && service.description_en ? service.description_en : service.description;
 
                                         return (
                                             <div
@@ -718,7 +609,7 @@ export default function Welcome({ services }: { services: Service[] }) {
                                                     {serviceImg && (
                                                         <img
                                                             src={serviceImg}
-                                                            alt={service.name}
+                                                            alt={serviceName}
                                                             className="h-full w-full object-cover"
                                                             onError={(e) => {
                                                                 e.currentTarget.style.display =
@@ -756,7 +647,7 @@ export default function Welcome({ services }: { services: Service[] }) {
                                                                     '1.3',
                                                             }}
                                                         >
-                                                            {service.name}
+                                                            {serviceName}
                                                         </h3>
                                                         <span
                                                             className="shrink-0 rounded-full px-3 py-1 text-xs font-semibold"
@@ -773,7 +664,7 @@ export default function Welcome({ services }: { services: Service[] }) {
                                                         </span>
                                                     </div>
 
-                                                    {service.description && (
+                                                    {serviceDesc && (
                                                         <p
                                                             className="mb-6 flex-grow text-sm leading-relaxed"
                                                             style={{
@@ -783,7 +674,7 @@ export default function Welcome({ services }: { services: Service[] }) {
                                                             }}
                                                         >
                                                             {
-                                                                service.description
+                                                                serviceDesc
                                                             }
                                                         </p>
                                                     )}

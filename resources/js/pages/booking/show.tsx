@@ -15,6 +15,7 @@ import {
     Navigation,
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import { TBooking as T } from '@/lib/public-translations';
 import { store as bookingStore } from '@/routes/booking';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -27,7 +28,9 @@ L.Icon.Default.mergeOptions({
 type Service = {
     id: number;
     name: string;
+    name_en?: string | null;
     description: string | null;
+    description_en?: string | null;
     duration_minutes: number;
     price: number;
     is_main_service: boolean;
@@ -115,143 +118,23 @@ const INP_S = {
     color: 'var(--pub-text)',
 };
 
-const T = {
-    id: {
-        title: 'Formulir Pemesanan Sesi — Home Care Therapy',
-        headerText: 'Pesan Sesi Terapi',
-        treatmentTitle: 'Pilih Layanan Terapi',
-        treatmentDesc:
-            'Pilih minimal satu layanan utama. Layanan add-on dapat ditambahkan bersama layanan utama.',
-        showFewer: 'Tampilkan lebih sedikit',
-        showAll: (count: number) => `Tampilkan semua layanan (${count} lagi)`,
-        mainRequiredWarning:
-            '⚠ Harap pilih minimal satu layanan utama. Add-on tidak dapat dipesan sendiri.',
-        addExtraCare: 'Tambah layanan tambahan',
-        hideExtraCare: 'Sembunyikan layanan tambahan',
-        addedBadge: (count: number) => `${count} ditambahkan`,
-        addonsCombinedDesc: 'Add-on harus digabungkan dengan layanan utama.',
-        selectedBadge: (count: number, mins: number) =>
-            `${count} dipilih · ${mins} menit total`,
-        chooseSchedule: 'Pilih Jadwal Terapi',
-        dateLabel: 'Tanggal',
-        timeLabel: 'Jam Pilihan',
-        customTimeLabel: 'Atau masukkan jam kustom:',
-        detailsTitle: 'Informasi Diri Anda',
-        fullNameLabel: 'Nama Lengkap',
-        fullNamePlaceholder: 'cth. Siti Aminah',
-        whatsappLabel: 'Nomor WhatsApp',
-        whatsappPlaceholder: 'cth. 08123456789',
-        additionalNotesLabel: 'Catatan Tambahan',
-        additionalNotesPlaceholder:
-            'cth. Keluhan fisik atau instruksi khusus...',
-        locationTitle: 'Alamat Kunjungan',
-        locationDesc:
-            'Tulis alamat lengkap Anda agar terapis kami dapat menuju ke lokasi.',
-        addressLabel: 'Alamat Lengkap',
-        addressPlaceholder: 'Jalan, RT/RW, Kelurahan, Kecamatan, Kota...',
-        locationNoteLabel: 'Patokan Lokasi',
-        locationNotePlaceholder: 'cth. Pagar merah, rumah ke-2 dari kiri',
-        mapsLabel: 'Link Google Maps',
-        mapsPlaceholder: 'https://maps.google.com/...',
-        safetyNotice:
-            'Alamat Anda hanya digunakan untuk keperluan janji temu ini. Keamanan data terjamin.',
-        summaryTitle: 'Ringkasan Pemesanan',
-        noServicesSelected: 'Belum ada layanan yang dipilih.',
-        total: 'Total Biaya',
-        dpAmount: 'Uang Muka (DP)',
-        remaining: 'Sisa Pembayaran (bayar ke terapis)',
-        submitting: 'Mengirim...',
-        confirmBtn: 'Konfirmasi Pemesanan',
-        selectMainToContinue:
-            'Pilih minimal satu layanan utama untuk melanjutkan.',
-        whatsappContactNotice:
-            'Kami akan menghubungi Anda melalui WhatsApp untuk mengonfirmasi pemesanan.',
-        backToHome: 'Kembali ke beranda',
-        useCurrentLocation: 'Gunakan Lokasi Saya',
-        locating: 'Mencari...',
-        mapInstruction:
-            'Geser penanda (marker) atau klik pada peta untuk menentukan posisi akurat Anda.',
-        coordinatesLabel: 'Koordinat',
-        mapHelper:
-            'Gunakan lokasi saya hanya jika Anda sedang berada di alamat kunjungan. Jika titik belum tepat, geser pin pada peta.',
-        lowAccuracyWarning:
-            'Lokasi mungkin belum akurat. Silakan geser pin agar sesuai alamat.',
-        noCoordinatesInfo:
-            'Belum ada titik koordinat terpilih. Anda tetap dapat mengisi alamat dan memilih titik secara manual di peta.',
-    },
-    en: {
-        title: 'Book a Session — Home Care Therapy',
-        headerText: 'Book a Session',
-        treatmentTitle: 'Select your treatment',
-        treatmentDesc:
-            'Choose at least one main service. Add-ons can be combined with a main service.',
-        showFewer: 'Show fewer',
-        showAll: (count: number) => `Show all services (${count} more)`,
-        mainRequiredWarning:
-            '⚠ Please also select at least one main service. Add-ons cannot be booked alone.',
-        addExtraCare: 'Add extra care',
-        hideExtraCare: 'Hide extra care',
-        addedBadge: (count: number) => `${count} added`,
-        addonsCombinedDesc: 'Add-ons must be combined with a main service.',
-        selectedBadge: (count: number, mins: number) =>
-            `${count} selected · ${mins} min total`,
-        chooseSchedule: 'Choose your schedule',
-        dateLabel: 'Date',
-        timeLabel: 'Preferred time',
-        customTimeLabel: 'Or enter a custom time:',
-        detailsTitle: 'Your details',
-        fullNameLabel: 'Full Name',
-        fullNamePlaceholder: 'e.g. Siti Aminah',
-        whatsappLabel: 'WhatsApp Number',
-        whatsappPlaceholder: 'e.g. 08123456789',
-        additionalNotesLabel: 'Additional Notes',
-        additionalNotesPlaceholder: 'Any special requests or conditions...',
-        locationTitle: 'Where should we come?',
-        locationDesc: 'Enter your home address so our therapist can find you.',
-        addressLabel: 'Full Address',
-        addressPlaceholder: 'Street, RT/RW, Kelurahan, Kecamatan, City...',
-        locationNoteLabel: 'Location Note',
-        locationNotePlaceholder: 'e.g. Red gate, 2nd house from the left',
-        mapsLabel: 'Google Maps Link',
-        mapsPlaceholder: 'https://maps.google.com/...',
-        safetyNotice:
-            'Your address is used only for this appointment. No data is shared.',
-        summaryTitle: 'Order Summary',
-        noServicesSelected: 'No services selected yet.',
-        total: 'Total',
-        dpAmount: 'DP (required to confirm)',
-        remaining: 'Remaining (paid to therapist)',
-        submitting: 'Submitting...',
-        confirmBtn: 'Confirm Booking',
-        selectMainToContinue: 'Select at least one main service to continue.',
-        whatsappContactNotice:
-            'We will contact you via WhatsApp to confirm your booking.',
-        backToHome: 'Back to home',
-        useCurrentLocation: 'Use My Current Location',
-        locating: 'Locating...',
-        mapInstruction:
-            'Drag the marker or click on the map to pinpoint your exact location.',
-        coordinatesLabel: 'Coordinates',
-        mapHelper:
-            'Use my current location only if you are currently at the visit address. If the point is not accurate, drag the pin on the map.',
-        lowAccuracyWarning:
-            'Your location may not be accurate. Please drag the pin to match the address.',
-        noCoordinatesInfo:
-            'No coordinate selected yet. You can still type the address and select a point manually on the map.',
-    },
-};
 
 function SvcCard({
     service,
     selected,
     onToggle,
     accent,
+    lang,
 }: {
     service: Service;
     selected: boolean;
     onToggle: () => void;
     accent: string;
+    lang: 'id' | 'en';
 }) {
+    const serviceName = lang === 'en' && service.name_en ? service.name_en : service.name;
+    const serviceDesc = lang === 'en' && service.description_en ? service.description_en : service.description;
+
     return (
         <button
             type="button"
@@ -285,14 +168,14 @@ function SvcCard({
                             className="truncate text-sm font-semibold"
                             style={{ color: 'var(--pub-text)' }}
                         >
-                            {service.name}
+                            {serviceName}
                         </p>
-                        {service.description && (
+                        {serviceDesc && (
                             <p
                                 className="text-xs leading-relaxed break-words whitespace-normal"
                                 style={{ color: 'var(--pub-text-muted)' }}
                             >
-                                {service.description}
+                                {serviceDesc}
                             </p>
                         )}
                     </div>
@@ -634,6 +517,7 @@ export default function Show({ services }: { services: Service[] }) {
                                             )}
                                             onToggle={() => toggleService(s.id)}
                                             accent="var(--pub-cta)"
+                                            lang={lang}
                                         />
                                     ))}
                                 </div>
@@ -788,6 +672,7 @@ export default function Show({ services }: { services: Service[] }) {
                                                             toggleService(s.id)
                                                         }
                                                         accent="var(--pub-sage-container)"
+                                                        lang={lang}
                                                     />
                                                 ))}
                                             </div>
@@ -825,7 +710,7 @@ export default function Show({ services }: { services: Service[] }) {
                                                         color: 'var(--pub-text-sub)',
                                                     }}
                                                 >
-                                                    {s.name}
+                                                    {lang === 'en' && s.name_en ? s.name_en : s.name}
                                                 </span>
                                                 <span
                                                     className="font-medium"
@@ -1448,8 +1333,7 @@ export default function Show({ services }: { services: Service[] }) {
                                                             color: 'var(--pub-text-sub)',
                                                         }}
                                                     >
-                                                        {s.name} (
-                                                        {s.duration_minutes}min)
+                                                        {lang === 'en' && s.name_en ? s.name_en : s.name} ({s.duration_minutes}min)
                                                     </span>
                                                     <span
                                                         className="font-medium"

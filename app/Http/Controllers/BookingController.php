@@ -16,7 +16,7 @@ class BookingController extends Controller
     {
         $services = Service::where('is_active', true)
             ->orderBy('sort_order')
-            ->get(['id', 'name', 'description', 'duration_minutes', 'price', 'is_main_service']);
+            ->get(['id', 'name', 'name_en', 'description', 'description_en', 'duration_minutes', 'price', 'is_main_service']);
 
         return Inertia::render('booking/show', [
             'services' => $services,

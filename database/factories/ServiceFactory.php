@@ -19,7 +19,9 @@ class ServiceFactory extends Factory
     {
         return [
             'name' => fake()->words(2, true),
+            'name_en' => null,
             'description' => fake()->optional()->sentence(),
+            'description_en' => null,
             'duration_minutes' => fake()->randomElement([60, 90, 120]),
             'price' => fake()->numberBetween(80000, 300000),
             'is_main_service' => true,

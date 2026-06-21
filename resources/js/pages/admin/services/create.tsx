@@ -33,7 +33,7 @@ export default function Create() {
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">Name (Indonesian)</Label>
                                 <Input
                                     id="name"
                                     name="name"
@@ -44,7 +44,17 @@ export default function Create() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="description">Description</Label>
+                                <Label htmlFor="name_en">Name (English)</Label>
+                                <Input
+                                    id="name_en"
+                                    name="name_en"
+                                    placeholder="English service name (optional)"
+                                />
+                                <InputError message={errors.name_en} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="description">Description (Indonesian)</Label>
                                 <textarea
                                     id="description"
                                     name="description"
@@ -52,6 +62,17 @@ export default function Create() {
                                     placeholder="Service description (optional)"
                                 />
                                 <InputError message={errors.description} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="description_en">Description (English)</Label>
+                                <textarea
+                                    id="description_en"
+                                    name="description_en"
+                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
+                                    placeholder="English service description (optional)"
+                                />
+                                <InputError message={errors.description_en} />
                             </div>
 
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

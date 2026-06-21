@@ -9,6 +9,7 @@ import {
     MapPin,
     ExternalLink,
     AlertCircle,
+    MessageCircle,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
@@ -107,6 +108,36 @@ function formatTime(dateStr: string): string {
     });
 }
 
+function normalizeWhatsAppPhone(phone: string | null | undefined): string | null {
+    if (!phone) {
+return null;
+}
+
+    const cleaned = phone.replace(/[\s()+-]/g, '');
+
+    if (!cleaned) {
+return null;
+}
+
+    if (cleaned.startsWith('0')) {
+        const result = '62' + cleaned.slice(1);
+
+        return /^\d+$/.test(result) ? result : null;
+    }
+
+    if (cleaned.startsWith('8')) {
+        const result = '62' + cleaned;
+
+        return /^\d+$/.test(result) ? result : null;
+    }
+
+    if (cleaned.startsWith('62')) {
+        return /^\d+$/.test(cleaned) ? cleaned : null;
+    }
+
+    return null;
+}
+
 export default function Show({
     appointment,
 }: {
@@ -147,6 +178,10 @@ export default function Show({
         label: appointment.payment_status,
         className: 'text-neutral-700 bg-neutral-50 border-neutral-200',
     };
+    const normalizedPhone = normalizeWhatsAppPhone(appointment.customer.phone_number);
+    const appointmentDate = formatDate(appointment.start_at);
+    const appointmentTime = formatTime(appointment.start_at);
+    const waMessage = `Halo Kak ${appointment.customer.name}, kami dari Home Care Therapy ingin mengonfirmasi jadwal terapi Anda pada ${appointmentDate} pukul ${appointmentTime}. Apakah jadwalnya sudah sesuai?`;
 
     return (
         <>
@@ -615,6 +650,25 @@ export default function Show({
                                     >
                                         {appointment.customer.phone_number}
                                     </a>
+
+                                    <div className="mt-2">
+                                        {normalizedPhone ? (
+                                            <a
+                                                href={`https://wa.me/${normalizedPhone}?text=${encodeURIComponent(waMessage)}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex w-full sm:w-auto items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-800"
+                                            >
+                                                <MessageCircle className="size-3.5 shrink-0" />
+                                                <span>Chat WhatsApp</span>
+                                                <ExternalLink className="size-3 shrink-0 opacity-80" />
+                                            </a>
+                                        ) : (
+                                            <span className="text-xs text-muted-foreground italic">
+                                                WhatsApp unavailable
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 

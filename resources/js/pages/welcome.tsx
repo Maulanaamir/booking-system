@@ -24,17 +24,31 @@ function formatPrice(price: number): string {
     return `Rp ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
 }
 
-function getServiceImage(index: number): string | null {
-    if (index === 0) {
-        return '/images/landing/service-relaxation.webp';
+function getServiceImage(service: Service): string | null {
+    const name = (service.name || '').toLowerCase();
+
+    if (name.includes('relaksasi') || name.includes('relaxing')) {
+        return '/images/services/relaksasi.png';
     }
 
-    if (index === 1) {
-        return '/images/landing/service-traditional.webp';
+    if (name.includes('tradisional') || name.includes('traditional')) {
+        return '/images/services/tradisional.png';
     }
 
-    if (index === 2) {
-        return '/images/landing/service-care.webp';
+    if (name.includes('fisioterapi') || name.includes('physiotherapy')) {
+        return '/images/services/fisioterapi.png';
+    }
+
+    if (name.includes('totok') || name.includes('acupressure')) {
+        return '/images/services/totok-wajah.png';
+    }
+
+    if (name.includes('ibu nifas') || name.includes('postnatal') || name.includes('postpartum')) {
+        return '/images/services/ibu-nifas.png';
+    }
+
+    if (name.includes('bekam') || name.includes('cupping')) {
+        return '/images/services/bekam.png';
     }
 
     return null;
@@ -587,9 +601,9 @@ export default function Welcome({ services }: { services: Service[] }) {
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-                                    {services.map((service, index) => {
+                                    {services.map((service) => {
                                         const serviceImg =
-                                            getServiceImage(index);
+                                            getServiceImage(service);
                                         const serviceName = lang === 'en' && service.name_en ? service.name_en : service.name;
                                         const serviceDesc = lang === 'en' && service.description_en ? service.description_en : service.description;
 
@@ -598,24 +612,29 @@ export default function Welcome({ services }: { services: Service[] }) {
                                                 key={service.id}
                                                 className="pub-card-solid pub-hover-lift flex flex-col overflow-hidden rounded-xl"
                                             >
-                                                {/* h-48 image area */}
+                                                {/* h-40 image area */}
                                                 <div
-                                                    className="relative h-48 w-full overflow-hidden"
+                                                    className="relative h-40 w-full overflow-hidden"
                                                     style={{
                                                         background:
                                                             CARD_GRADIENT,
                                                     }}
                                                 >
                                                     {serviceImg && (
-                                                        <img
-                                                            src={serviceImg}
-                                                            alt={serviceName}
-                                                            className="h-full w-full object-cover"
-                                                            onError={(e) => {
-                                                                e.currentTarget.style.display =
-                                                                    'none';
-                                                            }}
-                                                        />
+                                                        <>
+                                                            <img
+                                                                src={serviceImg}
+                                                                alt={serviceName}
+                                                                className="h-full w-full object-cover"
+                                                                onError={(e) => {
+                                                                    e.currentTarget.style.display =
+                                                                        'none';
+                                                                }}
+                                                            />
+                                                            {/* Soft warm overlay to blend image with brand colors */}
+                                                            <div className="absolute inset-0 bg-[#fff8f1]/15 mix-blend-multiply pointer-events-none" />
+                                                            <div className="absolute inset-0 bg-gradient-to-t from-[#f5ece7]/60 via-transparent to-transparent pointer-events-none" />
+                                                        </>
                                                     )}
                                                     <div
                                                         aria-hidden

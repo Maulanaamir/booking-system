@@ -244,3 +244,40 @@
     color: var(--sidebar-accent-foreground) !important;
     font-weight: 600;
 }
+
+/* =============================================================
+   Highlighter Effect (Philosophy Section)
+   ============================================================= */
+.dusty-highlight {
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+    white-space: nowrap;
+}
+
+.dusty-highlight::before {
+    content: '';
+    position: absolute;
+    bottom: 0.1em;
+    left: -0.15em;
+    right: -0.2em;
+    height: 0.45em;
+    background-color: rgba(223, 168, 168, 0.45); /* Soft dusty rose */
+    z-index: -1;
+    border-radius: 4px 8px 3px 7px; /* Organic uneven rounded corners */
+    transform: rotate(-1.5deg);
+    transform-origin: left center;
+    animation: highlighter-swipe 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes highlighter-swipe {
+    0% {
+        transform: scaleX(0) rotate(-1.5deg);
+        opacity: 0;
+    }
+    100% {
+        transform: scaleX(1) rotate(-1.5deg);
+        opacity: 1;
+    }
+}
+

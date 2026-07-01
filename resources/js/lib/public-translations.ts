@@ -55,6 +55,58 @@ export const TWelcome = {
         bookSession: 'Pesan Sesi',
         support: 'Dukungan',
         backToTop: 'Kembali ke Atas',
+        aboutTitle: 'Tentang Home Care Therapy',
+        aboutText:
+            'Home Care Therapy adalah layanan terapi panggilan ke rumah untuk pelanggan yang ingin merawat tubuh dengan lebih nyaman tanpa harus pergi ke tempat terapi. Layanan ini cocok untuk perempuan dan pasangan yang membutuhkan perawatan tubuh secara sopan, tenang, dan terjadwal.\n\nPelanggan dapat memilih layanan, menentukan jadwal, mengisi alamat kunjungan, lalu menunggu konfirmasi melalui WhatsApp. Terapis akan datang sesuai jadwal yang telah disetujui.',
+        areaTitle: 'Wilayah Layanan',
+        areaText:
+            'Layanan terapi panggilan tersedia untuk wilayah Tangerang dan area sekitarnya. Untuk beberapa area Jakarta, kunjungan juga dapat dilakukan dengan konfirmasi jadwal terlebih dahulu.\n\nUntuk pemesanan di luar Tangerang, pelanggan disarankan tidak melakukan booking secara mendadak agar jadwal dan perjalanan terapis dapat diatur dengan baik. Biaya transportasi tambahan dapat menyesuaikan lokasi kunjungan dan akan dikonfirmasi sebelum jadwal diterima.',
+        termsTitle: 'Ketentuan Kunjungan',
+        termsText:
+            'Setiap pemesanan akan dikonfirmasi terlebih dahulu melalui WhatsApp sebelum jadwal benar-benar diterima. Untuk kunjungan luar area utama, waktu perjalanan dan biaya transportasi dapat menjadi pertimbangan tambahan.\n\nAlamat pelanggan hanya digunakan untuk keperluan kunjungan terapi dan tidak ditampilkan secara publik.',
+        faqTitle: 'Pertanyaan yang Sering Diajukan (FAQ)',
+        faqItems: [
+            {
+                q: 'Apakah terapis datang ke rumah?',
+                a: 'Ya, terapis kami akan datang langsung ke alamat rumah atau lokasi yang Anda tentukan sesuai jadwal yang telah dikonfirmasi.'
+            },
+            {
+                q: 'Apakah layanan ini cocok untuk perempuan?',
+                a: 'Ya, layanan kami sangat ramah perempuan (women-friendly) dan menjamin kenyamanan serta kesopanan penuh.'
+            },
+            {
+                q: 'Apakah melayani area Jakarta?',
+                a: 'Ya, kami melayani beberapa area Jakarta tertentu dengan konfirmasi jadwal terlebih dahulu melalui WhatsApp.'
+            },
+            {
+                q: 'Apakah ada biaya transport tambahan?',
+                a: 'Kunjungan di luar wilayah Tangerang atau area yang cukup jauh dapat dikenakan biaya transportasi tambahan yang akan dikonfirmasi sebelum sesi disetujui.'
+            },
+            {
+                q: 'Apakah bisa booking untuk hari yang sama?',
+                a: 'Booking untuk hari yang sama dimungkinkan tergantung ketersediaan jadwal terapis. Namun, disarankan memesan minimal 1 hari sebelumnya agar jadwal lebih aman.'
+            },
+            {
+                q: 'Bagaimana cara melakukan booking?',
+                a: 'Cukup pilih layanan utama di website kami, tentukan tanggal dan waktu kunjungan, isi alamat lengkap Anda, lalu tim kami akan menghubungi Anda di WhatsApp untuk konfirmasi.'
+            },
+            {
+                q: 'Apakah alamat saya aman?',
+                a: 'Tentu. Alamat lengkap Anda sepenuhnya privat, aman, dan hanya digunakan oleh terapis kami untuk keperluan kunjungan terapi.'
+            },
+            {
+                q: 'Apakah pembayaran harus langsung lunas?',
+                a: 'Anda hanya perlu membayar uang muka (DP) tetap untuk mengonfirmasi pemesanan. Sisa pembayaran dapat dibayarkan secara manual langsung ke terapis setelah sesi selesai.'
+            }
+        ],
+        showMoreServices: 'Lihat layanan lainnya',
+        showFewerServices: 'Tampilkan lebih sedikit',
+        philosophyTitle: 'Perawatan tubuh, tanpa harus keluar rumah.',
+        philosophyText:
+            'Merawat tubuh tidak harus selalu keluar rumah. Home Care Therapy membantu pelanggan memesan terapi panggilan dengan cara yang lebih nyaman, tenang, dan terjadwal. Cocok untuk perempuan dan pasangan yang ingin perawatan tubuh di rumah dengan privasi alamat yang tetap terjaga.',
+        finalCtaTitle: 'Siap pesan terapi dari rumah?',
+        finalCtaDesc:
+            'Pilih layanan, tentukan jadwal, dan tunggu konfirmasi melalui WhatsApp.',
     },
     en: {
         tagline: 'Women-Friendly Visits',
@@ -111,6 +163,58 @@ export const TWelcome = {
         bookSession: 'Book Session',
         support: 'Support',
         backToTop: 'Back to Top',
+        aboutTitle: 'About Home Care Therapy',
+        aboutText:
+            'Home Care Therapy is a home visit therapy service for clients who wish to pamper their bodies comfortably without having to travel. This service is tailored for women and couples seeking respectful, calm, and scheduled body treatments.\n\nCustomers can select services, set their schedules, fill in the visit address, and wait for confirmation via WhatsApp. The therapist will arrive according to the agreed schedule.',
+        areaTitle: 'Service Area',
+        areaText:
+            'Home visit therapy services are available for Tangerang and surrounding areas. For selected areas in Jakarta, visits can be arranged with prior schedule confirmation.\n\nFor bookings outside Tangerang, customers are advised not to make urgent bookings so that the therapists\' schedule and travel can be properly planned. Additional transportation fees may apply depending on the visit location and will be confirmed before the appointment is accepted.',
+        termsTitle: 'Visit Terms',
+        termsText:
+            'Every booking will be confirmed first via WhatsApp before the schedule is fully accepted. For visits outside the main service area, travel time and transport fees may be considered additional factors.\n\nThe customer\'s address is used strictly for visit purposes and is never shared publicly.',
+        faqTitle: 'Frequently Asked Questions (FAQ)',
+        faqItems: [
+            {
+                q: 'Does the therapist come to my home?',
+                a: 'Yes, our therapist will come directly to your home or specified location according to the confirmed schedule.'
+            },
+            {
+                q: 'Is this service suitable for women?',
+                a: 'Yes, our service is highly women-friendly, prioritizing comfort, privacy, and utmost respect.'
+            },
+            {
+                q: 'Do you serve the Jakarta area?',
+                a: 'Yes, we serve selected areas in Jakarta subject to prior schedule confirmation via WhatsApp.'
+            },
+            {
+                q: 'Is there an additional transport fee?',
+                a: 'Visits outside Tangerang or specific remote areas may incur an additional transport fee, which will be confirmed with you before the session is approved.'
+            },
+            {
+                q: 'Can I book for the same day?',
+                a: 'Same-day booking is possible depending on therapist availability. However, booking at least 1 day in advance is highly recommended to secure your preferred slot.'
+            },
+            {
+                q: 'How do I book a session?',
+                a: 'Simply select your services on our website, select date/time, provide your address, and wait for our team to contact you via WhatsApp to finalize your booking.'
+            },
+            {
+                q: 'Is my address safe?',
+                a: 'Yes, your address is kept strictly private, used only for the therapist\'s visit, and fully secure.'
+            },
+            {
+                q: 'Do I pay in full immediately?',
+                a: 'You only pay a fixed down payment (DP) to confirm your booking. The remaining amount is paid directly to the therapist after the session is completed.'
+            }
+        ],
+        showMoreServices: 'Show more services',
+        showFewerServices: 'Show less',
+        philosophyTitle: 'Body care, without leaving home.',
+        philosophyText:
+            'Body care does not always have to mean leaving home. Home Care Therapy helps customers book home visit therapy in a calmer, more comfortable, and scheduled way. It is designed for women and couples who want body care at home with address privacy respected.',
+        finalCtaTitle: 'Ready to book from home?',
+        finalCtaDesc:
+            'Choose a treatment, pick a schedule, and wait for WhatsApp confirmation.',
     },
 };
 

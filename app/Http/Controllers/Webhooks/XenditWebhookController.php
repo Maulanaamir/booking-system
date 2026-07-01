@@ -17,17 +17,19 @@ class XenditWebhookController extends Controller
     {
         $token = $request->header('x-callback-token');
 
-        if (!$token || !$paymentService->verifyCallbackToken($token)) {
+        if (! $token || ! $paymentService->verifyCallbackToken($token)) {
             Log::warning('Xendit webhook received with invalid token', [
                 'token' => $token,
             ]);
+
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         $payload = $request->all();
         $externalId = $payload['external_id'] ?? null;
         $invoiceId = $payload['id'] ?? null;
-        $status = strtolower($payload['status'] ?? '');
+        $rawStatus = $payload['status'] ?? '';
+        $status = strtolower($rawStatus);
 
         Log::info('Xendit webhook received', [
             'external_id' => $externalId,
@@ -35,42 +37,65 @@ class XenditWebhookController extends Controller
             'status' => $status,
         ]);
 
-        if (!$externalId && !$invoiceId) {
+        if (! $externalId && ! $invoiceId) {
             return response()->json(['message' => 'Missing identifiers'], 400);
         }
 
-        // Find the payment record
-        $payment = Payment::where(function ($query) use ($externalId, $invoiceId) {
-            if ($externalId) {
-                $query->where('provider_reference_id', $externalId);
-            }
-            if ($invoiceId) {
-                $query->orWhere('provider_invoice_id', $invoiceId);
-            }
-        })->first();
+        // Find the payment record – scoped to Xendit provider only
+        $payment = Payment::where('provider', 'xendit')
+            ->where(function ($query) use ($externalId, $invoiceId) {
+                if ($externalId) {
+                    $query->where('provider_reference_id', $externalId);
+                }
+                if ($invoiceId) {
+                    $query->orWhere('provider_invoice_id', $invoiceId);
+                }
+            })
+            ->first();
 
-        if (!$payment) {
-            Log::warning('Payment record not found for webhook', [
+        if (! $payment) {
+            Log::warning('Xendit webhook: payment record not found', [
                 'external_id' => $externalId,
                 'invoice_id' => $invoiceId,
             ]);
+
             return response()->json(['message' => 'Payment not found'], 404);
         }
 
-        // Idempotency: check if already processed
+        // Idempotency: if already paid, do nothing
         if ($payment->status === 'paid') {
             return response()->json(['message' => 'Payment already marked as paid'], 200);
         }
 
-        // Map Xendit status to database payment status
-        $targetStatus = 'pending';
+        // --- Amount validation for paid events ---
         if ($status === 'paid') {
-            $targetStatus = 'paid';
-        } elseif ($status === 'expired') {
-            $targetStatus = 'expired';
-        } elseif ($status === 'failed') {
-            $targetStatus = 'failed';
+            // Xendit may send amount as `paid_amount`, `amount`, or not at all
+            $incomingAmount = $payload['paid_amount'] ?? $payload['amount'] ?? null;
+
+            if ($incomingAmount === null) {
+                Log::info('Xendit webhook: amount field not provided in payload', [
+                    'external_id' => $externalId,
+                    'invoice_id' => $invoiceId,
+                ]);
+            } elseif ((int) $incomingAmount !== (int) $payment->amount) {
+                Log::warning('Xendit webhook: amount mismatch — not marking paid', [
+                    'external_id' => $externalId,
+                    'invoice_id' => $invoiceId,
+                    'expected' => $payment->amount,
+                    'received' => $incomingAmount,
+                ]);
+
+                return response()->json(['message' => 'Amount mismatch'], 422);
+            }
         }
+
+        // Map incoming Xendit status to Payment.status
+        $targetStatus = match ($status) {
+            'paid' => 'paid',
+            'expired' => 'expired',
+            'failed' => 'failed',
+            default => 'pending',
+        };
 
         DB::transaction(function () use ($payment, $targetStatus, $payload) {
             $paidAt = null;
@@ -79,28 +104,34 @@ class XenditWebhookController extends Controller
                 $paidAt = $paidAtStr ? Carbon::parse($paidAtStr) : Carbon::now();
             }
 
-            // Update payment record
+            // Always save raw payload for auditing
             $payment->update([
                 'status' => $targetStatus,
                 'paid_at' => $paidAt,
                 'raw_payload' => $payload,
             ]);
 
-            // Update appointment record
             $appointment = $payment->appointment;
-            if ($appointment) {
-                $appointmentUpdate = [];
+            if (! $appointment) {
+                return;
+            }
 
-                if ($targetStatus === 'paid') {
-                    $appointmentUpdate['payment_status'] = 'paid';
-                    $appointmentUpdate['paid_at'] = $paidAt;
-                } elseif ($targetStatus === 'expired') {
-                    $appointmentUpdate['payment_status'] = 'unpaid';
-                }
-
-                if (!empty($appointmentUpdate)) {
-                    $appointment->update($appointmentUpdate);
-                }
+            if ($targetStatus === 'paid') {
+                $appointment->update([
+                    'payment_status' => 'dp_paid',
+                    'status' => 'pending_approval',
+                    'paid_at' => $paidAt,
+                ]);
+            } elseif ($targetStatus === 'expired') {
+                $appointment->update([
+                    'payment_status' => 'expired',
+                    // Only revert to pending_dp if appointment hasn't moved past that status yet
+                    // (i.e. do not downgrade an already approved/confirmed appointment)
+                ]);
+            } elseif ($targetStatus === 'failed') {
+                $appointment->update([
+                    'payment_status' => 'failed',
+                ]);
             }
         });
 

@@ -35,6 +35,7 @@ class BookingController extends Controller
         if ($paymentData) {
             \Illuminate\Support\Facades\DB::transaction(function () use ($appointment, $paymentData) {
                 $appointment->update([
+                    'payment_status' => 'dp_pending',
                     'xendit_external_id' => $paymentData['external_id'],
                     'xendit_invoice_id' => $paymentData['invoice_id'],
                     'xendit_invoice_url' => $paymentData['invoice_url'],

@@ -368,8 +368,14 @@ export const TSuccess = {
         backToHome: 'Kembali ke Beranda',
         payDpNow: 'Bayar DP Sekarang',
         paymentStatusLabel: 'Status Pembayaran',
-        unpaidStatus: 'Belum Dibayar',
-        paidStatus: 'Sudah Dibayar',
+        paymentStatusLabels: {
+            unpaid: 'Belum ada pembayaran',
+            dp_pending: 'Menunggu pembayaran DP',
+            dp_paid: 'DP sudah dibayar',
+            fully_paid: 'Lunas',
+            expired: 'Link pembayaran kedaluwarsa',
+            failed: 'Pembayaran gagal',
+        },
         fallbackMessage:
             'Link pembayaran otomatis belum tersedia. Silakan hubungi admin untuk konfirmasi pembayaran DP.',
     },
@@ -395,8 +401,14 @@ export const TSuccess = {
         backToHome: 'Back to Home',
         payDpNow: 'Pay DP Now',
         paymentStatusLabel: 'Payment Status',
-        unpaidStatus: 'Unpaid',
-        paidStatus: 'Paid',
+        paymentStatusLabels: {
+            unpaid: 'No payment yet',
+            dp_pending: 'Waiting for down payment',
+            dp_paid: 'Down payment paid',
+            fully_paid: 'Fully paid',
+            expired: 'Payment link expired',
+            failed: 'Payment failed',
+        },
         fallbackMessage:
             'Automatic payment link is not available yet. Please contact admin to confirm your DP payment.',
     },

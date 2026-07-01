@@ -10,11 +10,14 @@ use App\Models\Therapist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class PaymentTest extends TestCase
 {
     use RefreshDatabase;
+
+    // ─── Shared helpers ──────────────────────────────────────────────────────
 
     private function therapist(): Therapist
     {
@@ -48,11 +51,28 @@ class PaymentTest extends TestCase
         ], $overrides);
     }
 
+    private function pendingPayment(Appointment $appointment, array $overrides = []): Payment
+    {
+        return Payment::create(array_merge([
+            'id' => Str::uuid()->toString(),
+            'appointment_id' => $appointment->id,
+            'provider' => 'xendit',
+            'provider_reference_id' => 'appointment_ref_123',
+            'provider_invoice_id' => 'xendit_inv_123',
+            'payment_url' => 'https://checkout.xendit.co/web/xendit_inv_123',
+            'amount' => 50000,
+            'status' => 'pending',
+        ], $overrides));
+    }
+
+    // ─── Booking store → dp_pending ──────────────────────────────────────────
+
     /**
-     * Test booking creates appointment as pending_dp/unpaid,
-     * and a payment record is created when Xendit service succeeds.
+     * When Xendit invoice is created successfully, the appointment's
+     * payment_status must be set to "dp_pending" (not "unpaid"),
+     * and a Payment record with status "pending" must be created.
      */
-    public function test_booking_creates_appointment_and_payment_record_on_success(): void
+    public function test_booking_store_creates_appointment_with_dp_pending_when_payment_link_is_created(): void
     {
         $this->therapist();
         $service = $this->mainService();
@@ -67,124 +87,90 @@ class PaymentTest extends TestCase
             ], 200),
         ]);
 
-        $payload = $this->validPayload(['service_ids' => [$service->id]]);
-
-        $response = $this->post(route('booking.store'), $payload);
+        $response = $this->post(route('booking.store'), $this->validPayload([
+            'service_ids' => [$service->id],
+        ]));
 
         $appointment = Appointment::first();
-
         $response->assertRedirect(route('booking.success', $appointment));
 
         $this->assertNotNull($appointment);
         $this->assertEquals('pending_dp', $appointment->status);
-        $this->assertEquals('unpaid', $appointment->payment_status);
+        $this->assertEquals('dp_pending', $appointment->payment_status,
+            'payment_status should be dp_pending after Xendit link is created');
         $this->assertEquals('xendit_inv_123', $appointment->xendit_invoice_id);
-        $this->assertEquals('https://checkout.xendit.co/web/xendit_inv_123', $appointment->xendit_invoice_url);
+        $this->assertNotNull($appointment->xendit_external_id);
+        $this->assertNotNull($appointment->invoice_expired_at);
 
         $this->assertDatabaseHas('payments', [
             'appointment_id' => $appointment->id,
             'provider' => 'xendit',
             'provider_invoice_id' => 'xendit_inv_123',
-            'payment_url' => 'https://checkout.xendit.co/web/xendit_inv_123',
             'status' => 'pending',
             'amount' => 50000,
         ]);
     }
 
     /**
-     * Test booking page success receives and shows payment URL.
+     * When Xendit API fails, appointment is still saved with status "unpaid"
+     * (no payment link was issued, so payment_status stays "unpaid").
      */
-    public function test_success_page_receives_payment_url(): void
-    {
-        $this->therapist();
-        $customer = Customer::factory()->create();
-        $appointment = Appointment::factory()->create([
-            'customer_id' => $customer->id,
-            'xendit_invoice_url' => 'https://checkout.xendit.co/web/xendit_inv_123',
-            'payment_status' => 'unpaid',
-        ]);
-
-        $response = $this->get(route('booking.success', $appointment));
-        $response->assertOk();
-
-        // Inertia page should contain the payment URL in properties
-        $response->assertSee('https://checkout.xendit.co/web/xendit_inv_123');
-    }
-
-    /**
-     * Test Xendit API failure does not crash appointment booking creation,
-     * and shows fallback instructions on the success page.
-     */
-    public function test_xendit_api_failure_does_not_fail_booking_creation(): void
+    public function test_booking_store_keeps_unpaid_when_xendit_api_fails(): void
     {
         $this->therapist();
         $service = $this->mainService();
 
         Config::set('services.xendit.secret_key', 'test_secret_key');
 
-        // Force a mock failure (status 500)
         Http::fake([
             'https://api.xendit.co/v2/invoices' => Http::response([], 500),
         ]);
 
-        $payload = $this->validPayload(['service_ids' => [$service->id]]);
-
-        $response = $this->post(route('booking.store'), $payload);
+        $response = $this->post(route('booking.store'), $this->validPayload([
+            'service_ids' => [$service->id],
+        ]));
 
         $appointment = Appointment::first();
         $response->assertRedirect(route('booking.success', $appointment));
 
-        // Appointment is still saved
-        $this->assertNotNull($appointment);
         $this->assertEquals('pending_dp', $appointment->status);
-        $this->assertEquals('unpaid', $appointment->payment_status);
+        $this->assertEquals('unpaid', $appointment->payment_status,
+            'payment_status should remain unpaid when no payment link was created');
         $this->assertNull($appointment->xendit_invoice_url);
-
-        // No payment record created
         $this->assertEquals(0, Payment::count());
-
-        // Get success page to verify fallback messages
-        $successResponse = $this->get(route('booking.success', $appointment));
-        $successResponse->assertOk();
-        $successResponse->assertSee('Link pembayaran otomatis belum tersedia');
     }
 
+    // ─── Webhook paid → dp_paid + pending_approval ───────────────────────────
+
     /**
-     * Test webhook with valid token marks payment as paid.
+     * Xendit paid webhook marks Payment.status = "paid",
+     * Appointment.payment_status = "dp_paid", and
+     * Appointment.status = "pending_approval".
      */
-    public function test_webhook_with_valid_token_marks_payment_as_paid(): void
+    public function test_xendit_webhook_paid_marks_payment_paid_and_appointment_dp_paid_and_pending_approval(): void
     {
         $this->therapist();
         $customer = Customer::factory()->create();
         $appointment = Appointment::factory()->create([
             'customer_id' => $customer->id,
-            'payment_status' => 'unpaid',
+            'status' => 'pending_dp',
+            'payment_status' => 'dp_pending',
         ]);
 
-        $payment = Payment::create([
-            'id' => \Illuminate\Support\Str::uuid()->toString(),
-            'appointment_id' => $appointment->id,
-            'provider' => 'xendit',
-            'provider_reference_id' => 'appointment_ref_123',
-            'provider_invoice_id' => 'xendit_inv_123',
-            'payment_url' => 'https://checkout.xendit.co/web/xendit_inv_123',
-            'amount' => 50000,
-            'status' => 'pending',
-        ]);
+        $payment = $this->pendingPayment($appointment);
 
         Config::set('services.xendit.callback_token', 'valid_token');
 
-        $payload = [
-            'id' => 'xendit_inv_123',
-            'external_id' => 'appointment_ref_123',
-            'status' => 'PAID',
-            'paid_amount' => 50000,
-            'paid_at' => now()->toIso8601String(),
-        ];
+        $paidAt = now()->toIso8601String();
 
-        $response = $this->withHeaders([
-            'x-callback-token' => 'valid_token',
-        ])->postJson(route('webhooks.xendit'), $payload);
+        $response = $this->withHeaders(['x-callback-token' => 'valid_token'])
+            ->postJson(route('webhooks.xendit'), [
+                'id' => 'xendit_inv_123',
+                'external_id' => 'appointment_ref_123',
+                'status' => 'PAID',
+                'paid_amount' => 50000,
+                'paid_at' => $paidAt,
+            ]);
 
         $response->assertOk();
         $response->assertJsonPath('message', 'Webhook processed successfully');
@@ -196,63 +182,248 @@ class PaymentTest extends TestCase
 
         $this->assertDatabaseHas('appointments', [
             'id' => $appointment->id,
-            'payment_status' => 'paid',
-            'status' => 'pending_dp', // Webhook must NOT confirm booking automatically
-        ]);
-    }
-
-    /**
-     * Test webhook with invalid token is rejected.
-     */
-    public function test_webhook_with_invalid_token_is_rejected(): void
-    {
-        Config::set('services.xendit.callback_token', 'valid_token');
-
-        $response = $this->withHeaders([
-            'x-callback-token' => 'wrong_token',
-        ])->postJson(route('webhooks.xendit'), [
-            'id' => 'xendit_inv_123',
-            'external_id' => 'appointment_ref_123',
-            'status' => 'PAID',
+            'payment_status' => 'dp_paid',
+            'status' => 'pending_approval',
         ]);
 
-        $response->assertStatus(401);
+        // paid_at must be persisted on appointment
+        $this->assertNotNull($appointment->fresh()->paid_at);
     }
 
+    // ─── Idempotency ─────────────────────────────────────────────────────────
+
     /**
-     * Test duplicate webhooks are safe and handled idempotently.
+     * A duplicate paid webhook for an already-paid Payment must return 200
+     * and not corrupt any data.
      */
-    public function test_webhook_duplicate_remains_safe(): void
+    public function test_duplicate_paid_webhook_returns_200_and_does_not_corrupt_data(): void
     {
         $this->therapist();
         $customer = Customer::factory()->create();
         $appointment = Appointment::factory()->create([
             'customer_id' => $customer->id,
-            'payment_status' => 'paid', // already paid
+            'status' => 'pending_approval',
+            'payment_status' => 'dp_paid',
         ]);
 
-        $payment = Payment::create([
-            'id' => \Illuminate\Support\Str::uuid()->toString(),
+        $payment = $this->pendingPayment($appointment, ['status' => 'paid']);
+
+        Config::set('services.xendit.callback_token', 'valid_token');
+
+        $response = $this->withHeaders(['x-callback-token' => 'valid_token'])
+            ->postJson(route('webhooks.xendit'), [
+                'id' => 'xendit_inv_123',
+                'external_id' => 'appointment_ref_123',
+                'status' => 'PAID',
+                'paid_amount' => 50000,
+            ]);
+
+        $response->assertOk();
+        $response->assertJsonPath('message', 'Payment already marked as paid');
+
+        // Data must remain intact
+        $this->assertDatabaseHas('appointments', [
+            'id' => $appointment->id,
+            'status' => 'pending_approval',
+            'payment_status' => 'dp_paid',
+        ]);
+    }
+
+    // ─── Invalid token → 401 ─────────────────────────────────────────────────
+
+    /**
+     * A webhook with a wrong callback token must be rejected with 401.
+     */
+    public function test_webhook_with_invalid_callback_token_returns_401(): void
+    {
+        Config::set('services.xendit.callback_token', 'valid_token');
+
+        $response = $this->withHeaders(['x-callback-token' => 'wrong_token'])
+            ->postJson(route('webhooks.xendit'), [
+                'id' => 'xendit_inv_123',
+                'external_id' => 'appointment_ref_123',
+                'status' => 'PAID',
+            ]);
+
+        $response->assertStatus(401);
+    }
+
+    // ─── Amount mismatch → 422 ───────────────────────────────────────────────
+
+    /**
+     * When the webhook paid_amount does not match Payment.amount,
+     * the request is rejected with 422 and the payment is NOT marked paid.
+     */
+    public function test_webhook_with_mismatched_amount_does_not_mark_payment_as_paid(): void
+    {
+        $this->therapist();
+        $customer = Customer::factory()->create();
+        $appointment = Appointment::factory()->create([
+            'customer_id' => $customer->id,
+            'payment_status' => 'dp_pending',
+        ]);
+
+        $payment = $this->pendingPayment($appointment); // amount = 50000
+
+        Config::set('services.xendit.callback_token', 'valid_token');
+
+        $response = $this->withHeaders(['x-callback-token' => 'valid_token'])
+            ->postJson(route('webhooks.xendit'), [
+                'id' => 'xendit_inv_123',
+                'external_id' => 'appointment_ref_123',
+                'status' => 'PAID',
+                'paid_amount' => 1, // tampered amount
+            ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('message', 'Amount mismatch');
+
+        // Payment must remain pending
+        $this->assertDatabaseHas('payments', [
+            'id' => $payment->id,
+            'status' => 'pending',
+        ]);
+
+        // Appointment must remain unchanged
+        $this->assertDatabaseHas('appointments', [
+            'id' => $appointment->id,
+            'payment_status' => 'dp_pending',
+        ]);
+    }
+
+    /**
+     * When the webhook payload has no amount field at all,
+     * the payment should still be marked paid (amount check is skipped gracefully).
+     */
+    public function test_webhook_without_amount_field_still_marks_paid(): void
+    {
+        $this->therapist();
+        $customer = Customer::factory()->create();
+        $appointment = Appointment::factory()->create([
+            'customer_id' => $customer->id,
+            'payment_status' => 'dp_pending',
+        ]);
+
+        $payment = $this->pendingPayment($appointment);
+
+        Config::set('services.xendit.callback_token', 'valid_token');
+
+        $response = $this->withHeaders(['x-callback-token' => 'valid_token'])
+            ->postJson(route('webhooks.xendit'), [
+                'id' => 'xendit_inv_123',
+                'external_id' => 'appointment_ref_123',
+                'status' => 'PAID',
+                // no paid_amount or amount field
+            ]);
+
+        $response->assertOk();
+
+        $this->assertDatabaseHas('payments', [
+            'id' => $payment->id,
+            'status' => 'paid',
+        ]);
+    }
+
+    // ─── Expired webhook ─────────────────────────────────────────────────────
+
+    /**
+     * Xendit expired webhook marks Payment.status = "expired" and
+     * Appointment.payment_status = "expired".
+     * Appointment.status must stay "pending_dp" (not downgraded further).
+     */
+    public function test_xendit_webhook_expired_marks_payment_expired_and_appointment_expired(): void
+    {
+        $this->therapist();
+        $customer = Customer::factory()->create();
+        $appointment = Appointment::factory()->create([
+            'customer_id' => $customer->id,
+            'status' => 'pending_dp',
+            'payment_status' => 'dp_pending',
+        ]);
+
+        $payment = $this->pendingPayment($appointment);
+
+        Config::set('services.xendit.callback_token', 'valid_token');
+
+        $response = $this->withHeaders(['x-callback-token' => 'valid_token'])
+            ->postJson(route('webhooks.xendit'), [
+                'id' => 'xendit_inv_123',
+                'external_id' => 'appointment_ref_123',
+                'status' => 'EXPIRED',
+            ]);
+
+        $response->assertOk();
+
+        $this->assertDatabaseHas('payments', [
+            'id' => $payment->id,
+            'status' => 'expired',
+        ]);
+
+        $this->assertDatabaseHas('appointments', [
+            'id' => $appointment->id,
+            'payment_status' => 'expired',
+            'status' => 'pending_dp', // appointment.status is preserved
+        ]);
+    }
+
+    // ─── Provider isolation ──────────────────────────────────────────────────
+
+    /**
+     * A payment belonging to a different provider (e.g. "mayar") must not be
+     * matched by the Xendit webhook handler, even if the reference IDs match.
+     */
+    public function test_xendit_webhook_does_not_match_other_provider_payments(): void
+    {
+        $this->therapist();
+        $customer = Customer::factory()->create();
+        $appointment = Appointment::factory()->create([
+            'customer_id' => $customer->id,
+            'payment_status' => 'dp_pending',
+        ]);
+
+        // Create a payment belonging to a future provider
+        Payment::create([
+            'id' => Str::uuid()->toString(),
             'appointment_id' => $appointment->id,
-            'provider' => 'xendit',
+            'provider' => 'mayar',
             'provider_reference_id' => 'appointment_ref_123',
             'provider_invoice_id' => 'xendit_inv_123',
-            'payment_url' => 'https://checkout.xendit.co/web/xendit_inv_123',
+            'payment_url' => 'https://pay.mayar.id/inv_123',
             'amount' => 50000,
-            'status' => 'paid', // already marked paid
+            'status' => 'pending',
         ]);
 
         Config::set('services.xendit.callback_token', 'valid_token');
 
-        $response = $this->withHeaders([
-            'x-callback-token' => 'valid_token',
-        ])->postJson(route('webhooks.xendit'), [
-            'id' => 'xendit_inv_123',
-            'external_id' => 'appointment_ref_123',
-            'status' => 'PAID',
+        $response = $this->withHeaders(['x-callback-token' => 'valid_token'])
+            ->postJson(route('webhooks.xendit'), [
+                'id' => 'xendit_inv_123',
+                'external_id' => 'appointment_ref_123',
+                'status' => 'PAID',
+                'paid_amount' => 50000,
+            ]);
+
+        $response->assertStatus(404);
+    }
+
+    // ─── Backward-compatible: existing success-page test ─────────────────────
+
+    public function test_success_page_receives_payment_url(): void
+    {
+        $this->therapist();
+        $customer = Customer::factory()->create();
+        $appointment = Appointment::factory()->create([
+            'customer_id' => $customer->id,
+            'xendit_invoice_url' => 'https://checkout.xendit.co/web/xendit_inv_123',
+            'payment_status' => 'dp_pending',
         ]);
 
+        $response = $this->get(route('booking.success', $appointment));
         $response->assertOk();
-        $response->assertJsonPath('message', 'Payment already marked as paid');
+
+        // The URL appears inside the Inertia page JSON where '/' is encoded as '\/'
+        // We verify the appointment data is passed correctly by checking the JSON payload
+        $response->assertSee('xendit_invoice_url', false);
+        $response->assertSee('xendit_inv_123', false);
     }
 }

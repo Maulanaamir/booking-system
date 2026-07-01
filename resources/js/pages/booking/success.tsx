@@ -343,21 +343,30 @@ export default function Success({
                                             className="rounded-full px-2 py-0.5 text-xs font-semibold"
                                             style={{
                                                 color:
-                                                    appointment.payment_status ===
-                                                    'paid'
+                                                    appointment.payment_status === 'dp_paid' ||
+                                                    appointment.payment_status === 'fully_paid'
                                                         ? '#166534'
-                                                        : '#991b1b',
+                                                        : appointment.payment_status === 'dp_pending'
+                                                          ? '#92400e'
+                                                          : appointment.payment_status === 'expired' ||
+                                                              appointment.payment_status === 'failed'
+                                                            ? '#9a3412'
+                                                            : '#6b7280',
                                                 backgroundColor:
-                                                    appointment.payment_status ===
-                                                    'paid'
+                                                    appointment.payment_status === 'dp_paid' ||
+                                                    appointment.payment_status === 'fully_paid'
                                                         ? '#dcfce7'
-                                                        : '#fee2e2',
+                                                        : appointment.payment_status === 'dp_pending'
+                                                          ? '#fef3c7'
+                                                          : appointment.payment_status === 'expired' ||
+                                                              appointment.payment_status === 'failed'
+                                                            ? '#fee2e2'
+                                                            : '#f3f4f6',
                                             }}
                                         >
-                                            {appointment.payment_status ===
-                                            'paid'
-                                                ? T[lang].paidStatus
-                                                : T[lang].unpaidStatus}
+                                            {T[lang].paymentStatusLabels[
+                                                appointment.payment_status as keyof typeof T.id.paymentStatusLabels
+                                            ] ?? appointment.payment_status}
                                         </span>
                                     </div>
                                 </div>
@@ -383,8 +392,9 @@ export default function Success({
                                 </p>
                             </div>
 
-                            {/* DP instruction */}
-                            {appointment.xendit_invoice_url ? (
+                            {/* DP instruction — only when payment link was issued and DP is still pending */}
+                            {appointment.xendit_invoice_url &&
+                            appointment.payment_status === 'dp_pending' ? (
                                 <div
                                     className="rounded-2xl p-4"
                                     style={{
@@ -408,7 +418,7 @@ export default function Success({
                                         )}
                                     </p>
                                 </div>
-                            ) : (
+                            ) : !appointment.xendit_invoice_url ? (
                                 <div
                                     className="rounded-2xl border p-4"
                                     style={{
@@ -433,14 +443,14 @@ export default function Success({
                                         {T[lang].fallbackMessage}
                                     </p>
                                 </div>
-                            )}
+                            ) : null}
                         </div>
                     </section>
 
                     {/* Actions */}
                     <div className="mt-5 flex flex-col gap-3">
                         {appointment.xendit_invoice_url &&
-                            appointment.payment_status !== 'paid' && (
+                            appointment.payment_status === 'dp_pending' && (
                                 <a
                                     href={appointment.xendit_invoice_url}
                                     className="block w-full rounded-full px-6 py-4 text-center text-sm font-bold text-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg hover:brightness-110"

@@ -244,6 +244,8 @@ export const TBooking = {
         fullNamePlaceholder: 'cth. Siti Aminah',
         whatsappLabel: 'Nomor WhatsApp',
         whatsappPlaceholder: 'cth. 08123456789',
+        emailLabel: 'Alamat Email',
+        emailPlaceholder: 'cth. siti@email.com',
         additionalNotesLabel: 'Catatan Tambahan',
         additionalNotesPlaceholder:
             'cth. Keluhan fisik atau instruksi khusus...',
@@ -307,6 +309,8 @@ export const TBooking = {
         fullNamePlaceholder: 'e.g. Siti Aminah',
         whatsappLabel: 'WhatsApp Number',
         whatsappPlaceholder: 'e.g. 08123456789',
+        emailLabel: 'Email Address',
+        emailPlaceholder: 'e.g. siti@email.com',
         additionalNotesLabel: 'Additional Notes',
         additionalNotesPlaceholder: 'Any special requests or conditions...',
         locationTitle: 'Where should we come?',

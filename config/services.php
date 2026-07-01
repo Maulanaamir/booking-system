@@ -40,4 +40,14 @@ return [
         'callback_token' => env('XENDIT_CALLBACK_TOKEN'),
     ],
 
+    'mayar' => [
+        'api_key' => env('MAYAR_API_KEY'),
+        'base_url' => env('MAYAR_BASE_URL', 'https://api.mayar.id/hl/v1'),
+        'webhook_secret' => env('MAYAR_WEBHOOK_SECRET'),
+    ],
+
+    'payment' => [
+        'provider' => env('PAYMENT_PROVIDER', 'mayar'),
+    ],
+
 ];

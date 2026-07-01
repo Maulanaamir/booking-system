@@ -20,6 +20,7 @@ class CustomerFactory extends Factory
         return [
             'name' => fake()->name(),
             'phone_number' => fake()->unique()->numerify('+628##########'),
+            'email' => fake()->unique()->safeEmail(),
             'default_address' => fake()->address(),
             'default_latitude' => null,
             'default_longitude' => null,

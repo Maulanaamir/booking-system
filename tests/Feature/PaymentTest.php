@@ -42,6 +42,7 @@ class PaymentTest extends TestCase
             'time' => '09:00',
             'name' => 'Budi Santoso',
             'phone_number' => '081234567890',
+            'email' => 'budi@example.com',
             'address' => 'Jl. Melati No. 10, Jakarta Selatan',
             'maps_url' => null,
             'location_note' => null,
@@ -77,6 +78,7 @@ class PaymentTest extends TestCase
         $this->therapist();
         $service = $this->mainService();
 
+        Config::set('services.payment.provider', 'xendit');
         Config::set('services.xendit.secret_key', 'test_secret_key');
 
         Http::fake([
@@ -120,6 +122,7 @@ class PaymentTest extends TestCase
         $this->therapist();
         $service = $this->mainService();
 
+        Config::set('services.payment.provider', 'xendit');
         Config::set('services.xendit.secret_key', 'test_secret_key');
 
         Http::fake([
@@ -418,12 +421,23 @@ class PaymentTest extends TestCase
             'payment_status' => 'dp_pending',
         ]);
 
+        // Create a payment record to provide the generic payment_url
+        Payment::create([
+            'id' => \Illuminate\Support\Str::uuid()->toString(),
+            'appointment_id' => $appointment->id,
+            'provider' => 'xendit',
+            'provider_reference_id' => 'appointment_ref_123',
+            'provider_invoice_id' => 'xendit_inv_123',
+            'payment_url' => 'https://checkout.xendit.co/web/xendit_inv_123',
+            'amount' => 50000,
+            'status' => 'pending',
+        ]);
+
         $response = $this->get(route('booking.success', $appointment));
         $response->assertOk();
 
-        // The URL appears inside the Inertia page JSON where '/' is encoded as '\/'
-        // We verify the appointment data is passed correctly by checking the JSON payload
-        $response->assertSee('xendit_invoice_url', false);
+        // Verify generic payment_url is served from the payments table
+        $response->assertSee('payment_url', false);
         $response->assertSee('xendit_inv_123', false);
     }
 }

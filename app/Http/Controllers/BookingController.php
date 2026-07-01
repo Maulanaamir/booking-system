@@ -6,7 +6,10 @@ use App\Actions\StoreBookingAction;
 use App\Http\Requests\BookingRequest;
 use App\Models\Appointment;
 use App\Models\Service;
+use App\Services\MayarPaymentService;
+use App\Services\XenditPaymentService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,24 +29,36 @@ class BookingController extends Controller
     public function store(
         BookingRequest $request,
         StoreBookingAction $action,
-        \App\Services\XenditPaymentService $paymentService
+        MayarPaymentService $mayarService,
+        XenditPaymentService $xenditService
     ): RedirectResponse {
         $appointment = $action->handle($request);
 
-        $paymentData = $paymentService->createDpPaymentLink($appointment);
+        $provider = config('services.payment.provider', 'mayar');
+
+        $paymentData = match ($provider) {
+            'xendit' => $xenditService->createDpPaymentLink($appointment),
+            default => $mayarService->createDpPaymentLink($appointment),
+        };
 
         if ($paymentData) {
-            \Illuminate\Support\Facades\DB::transaction(function () use ($appointment, $paymentData) {
-                $appointment->update([
+            DB::transaction(function () use ($appointment, $paymentData, $provider) {
+                $updateData = [
                     'payment_status' => 'dp_pending',
-                    'xendit_external_id' => $paymentData['external_id'],
-                    'xendit_invoice_id' => $paymentData['invoice_id'],
-                    'xendit_invoice_url' => $paymentData['invoice_url'],
                     'invoice_expired_at' => $paymentData['expired_at'],
-                ]);
+                ];
+
+                // Keep xendit-specific columns populated when using xendit
+                if ($provider === 'xendit') {
+                    $updateData['xendit_external_id'] = $paymentData['external_id'];
+                    $updateData['xendit_invoice_id'] = $paymentData['invoice_id'];
+                    $updateData['xendit_invoice_url'] = $paymentData['invoice_url'];
+                }
+
+                $appointment->update($updateData);
 
                 $appointment->payments()->create([
-                    'provider' => 'xendit',
+                    'provider' => $provider,
                     'provider_reference_id' => $paymentData['external_id'],
                     'provider_invoice_id' => $paymentData['invoice_id'],
                     'payment_url' => $paymentData['invoice_url'],
@@ -60,18 +75,31 @@ class BookingController extends Controller
 
     public function success(Appointment $appointment): Response
     {
+        // Load latest pending/paid payment for the generic payment URL
+        $latestPayment = $appointment->payments()
+            ->whereIn('status', ['pending', 'paid'])
+            ->latest()
+            ->first();
+
         return Inertia::render('booking/success', [
-            'appointment' => $appointment->only([
-                'id',
-                'start_at',
-                'service_end_at',
-                'total_price',
-                'dp_amount',
-                'remaining_payment',
-                'status',
-                'payment_status',
-                'xendit_invoice_url',
-            ]),
+            'appointment' => array_merge(
+                $appointment->only([
+                    'id',
+                    'start_at',
+                    'service_end_at',
+                    'total_price',
+                    'dp_amount',
+                    'remaining_payment',
+                    'status',
+                    'payment_status',
+                    'xendit_invoice_url',
+                ]),
+                [
+                    'payment_url' => $latestPayment?->payment_url,
+                    'payment_provider' => $latestPayment?->provider,
+                    'payment_expired_at' => $latestPayment?->expired_at,
+                ],
+            ),
         ]);
     }
 }

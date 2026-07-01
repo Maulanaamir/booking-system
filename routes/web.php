@@ -10,6 +10,7 @@ Route::get('/booking', [BookingController::class, 'show'])->name('booking.show')
 Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
 Route::get('/booking/success/{appointment}', [BookingController::class, 'success'])->name('booking.success');
 Route::post('/webhooks/xendit', [\App\Http\Controllers\Webhooks\XenditWebhookController::class, 'handle'])->name('webhooks.xendit');
+Route::post('/webhooks/mayar', [\App\Http\Controllers\Webhooks\MayarWebhookController::class, 'handle'])->name('webhooks.mayar');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

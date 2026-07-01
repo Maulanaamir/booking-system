@@ -29,6 +29,7 @@ class BookingRequest extends FormRequest
             'time' => ['required', 'date_format:H:i'],
             'name' => ['required', 'string', 'max:255'],
             'phone_number' => ['required', 'string', 'max:30'],
+            'email' => ['required', 'string', 'email', 'max:255'],
             'address' => ['required', 'string', 'max:1000'],
             'maps_url' => ['nullable', 'url', 'max:2048'],
             'location_note' => ['nullable', 'string', 'max:1000'],

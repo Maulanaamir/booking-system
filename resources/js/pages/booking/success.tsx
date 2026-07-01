@@ -21,7 +21,9 @@ type AppointmentSummary = {
     remaining_payment: number;
     status: string;
     payment_status: string;
-    xendit_invoice_url: string | null;
+    payment_url: string | null;
+    payment_provider: string | null;
+    payment_expired_at: string | null;
 };
 
 function formatPrice(price: number): string {
@@ -393,7 +395,7 @@ export default function Success({
                             </div>
 
                             {/* DP instruction — only when payment link was issued and DP is still pending */}
-                            {appointment.xendit_invoice_url &&
+                            {appointment.payment_url &&
                             appointment.payment_status === 'dp_pending' ? (
                                 <div
                                     className="rounded-2xl p-4"
@@ -418,7 +420,7 @@ export default function Success({
                                         )}
                                     </p>
                                 </div>
-                            ) : !appointment.xendit_invoice_url ? (
+                            ) : !appointment.payment_url ? (
                                 <div
                                     className="rounded-2xl border p-4"
                                     style={{
@@ -449,10 +451,10 @@ export default function Success({
 
                     {/* Actions */}
                     <div className="mt-5 flex flex-col gap-3">
-                        {appointment.xendit_invoice_url &&
+                        {appointment.payment_url &&
                             appointment.payment_status === 'dp_pending' && (
                                 <a
-                                    href={appointment.xendit_invoice_url}
+                                    href={appointment.payment_url}
                                     className="block w-full rounded-full px-6 py-4 text-center text-sm font-bold text-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg hover:brightness-110"
                                     style={{
                                         backgroundColor: 'var(--pub-lavender)',

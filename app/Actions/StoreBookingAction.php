@@ -71,6 +71,7 @@ class StoreBookingAction
                 ['phone_number' => $request->validated('phone_number')],
                 [
                     'name' => $request->validated('name'),
+                    'email' => $request->validated('email'),
                     'default_address' => $request->validated('address'),
                     'default_latitude' => $lat,
                     'default_longitude' => $lng,

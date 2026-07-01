@@ -48,6 +48,7 @@ class BookingTest extends TestCase
             'time' => '09:00',
             'name' => 'Budi Santoso',
             'phone_number' => '081234567890',
+            'email' => 'budi@example.com',
             'address' => 'Jl. Melati No. 10, Jakarta Selatan',
             'maps_url' => null,
             'location_note' => null,

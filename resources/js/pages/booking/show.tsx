@@ -41,6 +41,7 @@ type BookingForm = {
     time: string;
     name: string;
     phone_number: string;
+    email: string;
     address: string;
     maps_url: string;
     location_note: string;
@@ -237,6 +238,7 @@ export default function Show({ services }: { services: Service[] }) {
         time: '',
         name: '',
         phone_number: '',
+        email: '',
         address: '',
         maps_url: '',
         location_note: '',
@@ -953,6 +955,42 @@ export default function Show({ services }: { services: Service[] }) {
                                             {errors.phone_number && (
                                                 <p className="text-red-655 mt-1 text-xs">
                                                     {errors.phone_number}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <label
+                                                htmlFor="email"
+                                                className="mb-1.5 block text-sm font-semibold"
+                                                style={{
+                                                    color: 'var(--pub-text)',
+                                                }}
+                                            >
+                                                {T[lang].emailLabel}{' '}
+                                                <span className="text-red-500">
+                                                    *
+                                                </span>
+                                            </label>
+                                            <input
+                                                id="email"
+                                                type="email"
+                                                autoComplete="email"
+                                                value={data.email}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'email',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                placeholder={
+                                                    T[lang].emailPlaceholder
+                                                }
+                                                className={INP}
+                                                style={INP_S}
+                                            />
+                                            {errors.email && (
+                                                <p className="text-red-655 mt-1 text-xs">
+                                                    {errors.email}
                                                 </p>
                                             )}
                                         </div>
